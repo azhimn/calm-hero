@@ -86,7 +86,7 @@ Presets:
       Instant:
         Name: Instant
         Constants:
-          CarouselSlideDuration: { Type: Duration, Value: '0:0:0' }
+          CarouselSlideDuration: { Type: Duration, Value: '0:0:0.001' }
 
 Variables:
   TabsInfo:

@@ -34,7 +34,7 @@ A fork of Handheld Hero (MIT, nickhighland) that keeps its performance disciplin
 - Must honour Playnite's required `PART_` element names so the app keeps working.
 - Fonts and icons must be redistributable (OFL/MIT or similar) and bundled in the theme folder.
 - `Views/Main.xaml` was produced by the upstream author's template generator, which is not in the repo; we edit the XAML directly.
-- Undecided: final theme name (working name "Handheld Hero Fork"); new Theme `Id`.
+- Name: Calm Hero (Id `CalmHero_a1af5af7-…`).
 
 ## Brand Commitments
 

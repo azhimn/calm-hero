@@ -13,4 +13,4 @@ Simulated keyboard/mouse input does not reach Playnite on the dev machine, so te
 - `scripts/pn-presets.ps1 -Presets Selection.Ring,...`: set Theme Options presets for the fork (Playnite closed).
 
 The theme folder is linked into Playnite with a junction:
-`mklink /J "%APPDATA%\Playnite\Themes\Fullscreen\HandheldHeroFork_a1af5af7-dcb8-4ffe-9f19-19ba154b7b46" C:\Roggie\theme\HandheldHero`
+`mklink /J "%APPDATA%\Playnite\Themes\Fullscreen\CalmHero_a1af5af7-dcb8-4ffe-9f19-19ba154b7b46" C:\Roggie\theme\HandheldHero`
