@@ -2,49 +2,74 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--
-        Top tabs (quick filter presets): HOME / ALL GAMES / FAVORITES / RECENT / ...
-        Active tab = dark pill with a glowing blue outline and bright text, everything else is plain muted text.
-        Playnite creates one CheckBoxEx per preset and applies this style; LB / RB cycle through them.
+        Top tabs (quick filter presets). Playnite creates one CheckBoxEx per preset; LB / RB cycle through them.
+        Every tab keeps the same weight so labels never shift. The selected tab is brighter and gets an accent
+        underline the width of its label. Switching hands the line over: the old one shrinks away quickly and
+        the new one grows in just after it. (Each tab only knows its own state, so a sliding line is not possible.)
+        Underline opacity, pill fill and inactive colour come from Constants.xaml so Theme Options presets can
+        switch to the soft-pill or text-only styles.
     -->
     <Style x:Key="ItemFilterQuickPreset" TargetType="CheckBoxEx">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Foreground" Value="#FFA9B6BF" />
+        <Setter Property="Foreground" Value="{DynamicResource TabInactiveBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBoxEx">
-                    <Grid Margin="6,0">
-                        <!-- soft outer glow for the active tab (plain borders, no shader effect) -->
-                        <Border x:Name="TabGlow" CornerRadius="18" Margin="-5" BorderThickness="5"
-                                BorderBrush="#403FA2FF" Visibility="Collapsed" IsHitTestVisible="False" />
-                        <Border x:Name="TabBorder"
-                                Background="Transparent"
-                                BorderBrush="Transparent"
-                                BorderThickness="2.5"
-                                CornerRadius="14"
-                                Padding="30,6,30,8">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="LineIn">
+                            <DoubleAnimation Storyboard.TargetName="LineScale" Storyboard.TargetProperty="ScaleX"
+                                             To="1" BeginTime="0:0:0.1" Duration="0:0:0.28">
+                                <DoubleAnimation.EasingFunction>
+                                    <ExponentialEase EasingMode="EaseOut" Exponent="6" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                        <Storyboard x:Key="LineOut">
+                            <DoubleAnimation Storyboard.TargetName="LineScale" Storyboard.TargetProperty="ScaleX"
+                                             To="0" Duration="0:0:0.13">
+                                <DoubleAnimation.EasingFunction>
+                                    <QuadraticEase EasingMode="EaseIn" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+                    <Border x:Name="TabBorder" Margin="2,0" Padding="22,10,22,14" CornerRadius="999"
+                            Background="Transparent">
+                        <Grid>
                             <TextBlock x:Name="TextContent"
-                                       Text="{Binding Name, Converter={StaticResource StringToUpperCaseConverter}}"
-                                       Style="{DynamicResource TextBlockBaseStyle}"
-                                       FontFamily="{DynamicResource FontTitilliumWebBold}"
-                                       FontSize="34"
+                                       Text="{Binding Name}"
+                                       FontFamily="{DynamicResource FontUI}" FontWeight="SemiBold"
+                                       FontSize="27"
                                        Foreground="{TemplateBinding Foreground}"
                                        TextTrimming="CharacterEllipsis"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center" />
-                        </Border>
-                    </Grid>
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <!-- underline: label width, 4 px, just below the text -->
+                            <Border x:Name="Line" Height="4" CornerRadius="2" VerticalAlignment="Bottom" Margin="0,0,0,-12"
+                                    Background="{DynamicResource AccentBrush}" Opacity="{DynamicResource TabUnderlineOpacity}"
+                                    RenderTransformOrigin="0.5,0.5" IsHitTestVisible="False">
+                                <Border.RenderTransform>
+                                    <ScaleTransform x:Name="LineScale" ScaleX="0" />
+                                </Border.RenderTransform>
+                            </Border>
+                        </Grid>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="TabBorder" Property="Background" Value="#CC0B1218" />
-                            <Setter TargetName="TabBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                            <Setter TargetName="TextContent" Property="Foreground" Value="White" />
-                            <Setter TargetName="TabGlow" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TextContent" Property="Foreground" Value="{DynamicResource TextBrush}" />
+                            <Setter TargetName="TabBorder" Property="Background" Value="{DynamicResource TabPillBrush}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard x:Name="LineInAnim" Storyboard="{StaticResource LineIn}" />
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="LineInAnim" />
+                                <BeginStoryboard Storyboard="{StaticResource LineOut}" />
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="TextContent" Property="Foreground" Value="White" />
+                            <Setter TargetName="TextContent" Property="Foreground" Value="{DynamicResource TextBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

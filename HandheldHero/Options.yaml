@@ -1,0 +1,98 @@
+# Settings shown by the Theme Options extension (Playnite > Settings > Theme Options).
+# Without the extension the theme uses the "Default" preset of every group.
+Presets:
+  Font:
+    Name: Font
+    Presets:
+      Default:
+        Name: Segoe UI Variable
+      Bahnschrift:
+        Name: Bahnschrift
+        Files:
+          - Options/Fonts/Bahnschrift.xaml
+      SegoeUI:
+        Name: Segoe UI (Windows 10 look)
+        Files:
+          - Options/Fonts/SegoeUI.xaml
+
+  Selection:
+    Name: Selection style
+    Presets:
+      Default:
+        Name: Lift (cover grows, others dim)
+        Constants:
+          SelectionRingThickness: { Type: Thickness, Value: '0' }
+          UnselectedDimOpacity: { Type: Double, Value: 0.28 }
+      Ring:
+        Name: Ring
+        Constants:
+          SelectionRingThickness: { Type: Thickness, Value: '3' }
+          SelectionRingBrush: { Type: SolidColorBrush, Value: '#EBFFFFFF' }
+          UnselectedDimOpacity: { Type: Double, Value: 0 }
+      Accent:
+        Name: Thin accent ring
+        Constants:
+          SelectionRingThickness: { Type: Thickness, Value: '2.5' }
+          SelectionRingBrush: { Type: SolidColorBrush, Value: '#FF8CC8FF' }
+          UnselectedDimOpacity: { Type: Double, Value: 0 }
+
+  Tabs:
+    Name: Tab style
+    Presets:
+      Default:
+        Name: Underline
+        Constants:
+          TabUnderlineOpacity: { Type: Double, Value: 1 }
+          TabPillBrush: { Type: SolidColorBrush, Value: '#00000000' }
+          TabInactiveBrush: { Type: SolidColorBrush, Value: '#94F4F7F8' }
+      Pill:
+        Name: Soft pill
+        Constants:
+          TabUnderlineOpacity: { Type: Double, Value: 0 }
+          TabPillBrush: { Type: SolidColorBrush, Value: '#21FFFFFF' }
+          TabInactiveBrush: { Type: SolidColorBrush, Value: '#94F4F7F8' }
+      Text:
+        Name: Text only
+        Constants:
+          TabUnderlineOpacity: { Type: Double, Value: 0 }
+          TabPillBrush: { Type: SolidColorBrush, Value: '#00000000' }
+          TabInactiveBrush: { Type: SolidColorBrush, Value: '#75F4F7F8' }
+
+  Prompts:
+    Name: Button prompts
+    Presets:
+      Default:
+        Name: Mono
+      Colour:
+        Name: Colour
+        Constants:
+          PromptABrush: { Type: SolidColorBrush, Value: '#FF1A7D34' }
+          PromptBBrush: { Type: SolidColorBrush, Value: '#FFC42F2B' }
+          PromptXBrush: { Type: SolidColorBrush, Value: '#FF2266CC' }
+          PromptYBrush: { Type: SolidColorBrush, Value: '#FFE8B71A' }
+          PromptATextBrush: { Type: SolidColorBrush, Value: '#FFFFFFFF' }
+          PromptBTextBrush: { Type: SolidColorBrush, Value: '#FFFFFFFF' }
+          PromptXTextBrush: { Type: SolidColorBrush, Value: '#FFFFFFFF' }
+          PromptYTextBrush: { Type: SolidColorBrush, Value: '#FF1D1600' }
+          PromptRingBrush: { Type: SolidColorBrush, Value: '#33FFFFFF' }
+
+  Motion:
+    Name: Carousel movement
+    Presets:
+      Default:
+        Name: Animated slide
+        Constants:
+          CarouselSlideDuration: { Type: Duration, Value: '0:0:0.24' }
+      Instant:
+        Name: Instant
+        Constants:
+          CarouselSlideDuration: { Type: Duration, Value: '0:0:0' }
+
+Variables:
+  TabsInfo:
+    Title: "Tab order & names are set in Playnite Desktop"
+    Type: Header
+  RememberLastTab:
+    Title: "Reopen the last used tab"
+    Type: Boolean
+    Default: false

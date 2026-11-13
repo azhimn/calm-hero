@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Theme mockup — Handheld Hero fork</title>
+<style>
+@font-face { font-family: "SUV"; src: local("Segoe UI Variable Display"), url(fonts/SegUIVar.ttf); font-weight: 300 700; }
+@font-face { font-family: "Bahn"; src: local("Bahnschrift"), url(fonts/bahnschrift.ttf); font-weight: 300 700; font-stretch: 75% 100%; }
+@font-face { font-family: "Titil"; src: url(fonts/TitilliumWeb-Light.ttf); font-weight: 300 400; }
+@font-face { font-family: "Titil"; src: url(fonts/TitilliumWeb-Bold.ttf); font-weight: 600 700; }
+@font-face { font-family: "Fluent"; src: local("Segoe Fluent Icons"), url(fonts/SegoeIcons.ttf); }
+
+:root {
+  --ground: #081013;
+  --panel: rgba(15, 23, 29, .86);
+  --panel-solid: #0f171d;
+  --raise: rgba(255, 255, 255, .07);
+  --raise-hi: rgba(255, 255, 255, .13);
+  --line: rgba(255, 255, 255, .10);
+  --text: #f4f7f8;
+  --muted: #a7b2b8;
+  --faint: #76838a;
+  --accent: #3fa2ff;
+  --accent-soft: #8cc8ff;
+  --on-accent: #04111d;
+  --ok: #5bd18b;
+  --r-tile: 12px;
+  --r-btn: 14px;
+  --r-panel: 22px;
+  --ui: "SUV", "Segoe UI", sans-serif;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --dur: 240ms;
+}
+body.font-bahn { --ui: "Bahn", "Segoe UI", sans-serif; }
+body.font-titil { --ui: "Titil", "Segoe UI", sans-serif; }
+body.no-anim { --dur: 0ms; }
+
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; background: #030608; color: var(--text); overflow: hidden; }
+body { font-family: var(--ui); -webkit-font-smoothing: antialiased; }
+::selection { background: var(--accent); color: var(--on-accent); }
+.ic { font-family: "Fluent"; font-weight: normal; font-style: normal; line-height: 1; flex: none; }
+/* label text trimmed to cap height, so align-items:center centres icons on the capitals, not the line box */
+.t { text-box: trim-both cap alphabetic; }
+
+/* ---------- mockup toolbar (not part of the theme) ---------- */
+#tools {
+  position: fixed; inset: 0 0 auto 0; z-index: 50; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center;
+  padding: 8px 14px; background: #10161a; border-bottom: 1px solid #222c32; font: 13px/1.35 system-ui, sans-serif; color: #c9d2d6;
+}
+#tools b { color: #fff; font-weight: 600; margin-right: 2px; }
+#tools .grp { display: flex; gap: 4px; align-items: center; }
+#tools button { font: inherit; color: #c9d2d6; background: #1b2429; border: 1px solid #2a353b; border-radius: 6px; padding: 4px 9px; cursor: pointer; }
+#tools button[aria-pressed="true"] { background: #2b6fb0; border-color: #3fa2ff; color: #fff; }
+#tools .note { color: #7d8a90; margin-left: auto; }
+body.hide-tools #tools { display: none; }
+
+#stage { position: fixed; inset: 46px 0 0 0; display: grid; place-items: center; }
+body.hide-tools #stage { inset: 0; }
+#device { width: 1920px; height: 1080px; position: relative; overflow: hidden; background: var(--ground); transform-origin: center; flex: none; }
+body.r1610 #device { height: 1200px; }
+
+/* ---------- shared chrome ---------- */
+.bg { position: absolute; inset: 0; background-size: cover; background-position: center top; transition: opacity 420ms ease; }
+.scrim { position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(8,16,19,.92) 0%, rgba(8,16,19,.55) 38%, rgba(8,16,19,.10) 70%),
+    linear-gradient(180deg, rgba(8,16,19,.70) 0%, rgba(8,16,19,0) 18%, rgba(8,16,19,0) 55%, rgba(8,16,19,.92) 100%); }
+.screen { position: absolute; inset: 0; display: none; }
+.screen.on { display: block; }
+
+.topbar { position: absolute; inset: 0 0 auto 0; height: 104px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 44px; z-index: 5; }
+.tabs { display: flex; align-items: center; gap: 10px; }
+.tabs .sh { opacity: .85; }
+.tab { position: relative; padding: 12px 22px; font-size: 26px; font-weight: 600; letter-spacing: .01em; color: rgba(244,247,248,.58); border-radius: 999px;
+  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease); }
+.tab.sel { color: var(--text); }
+/* tab style A: underline pill */
+/* underline spans the label: inset by the tab's horizontal padding */
+body.tab-line .tab::after { content: ""; position: absolute; left: 22px; right: 22px; bottom: 2px; height: 4px; border-radius: 4px; background: var(--accent); transform: scaleX(0);
+  transition: transform calc(var(--dur) * .55) cubic-bezier(.5, 0, .9, .4); }
+/* hand-off: the old line leaves fast, the new one grows in just after it; both are plain XAML trigger animations */
+body.tab-line .tab.sel::after { transform: scaleX(1); transition: transform calc(var(--dur) * 1.15) var(--ease) calc(var(--dur) * .4); }
+/* tab style B: soft filled pill */
+body.tab-pill .tab.sel { background: var(--raise-hi); }
+/* tab style C: text only. Same weight as the other styles so labels never shift; the selected tab is told apart by brightness alone */
+body.tab-text .tab { color: rgba(244,247,248,.46); }
+body.tab-text .tab.sel { color: var(--text); }
+
+.status { justify-self: start; display: flex; align-items: center; gap: 26px; font-size: 24px; font-weight: 500; color: var(--text); }
+.status .bat { display: flex; align-items: center; gap: 8px; }
+.status .bat .ic { font-size: 30px; }
+.gearwrap { justify-self: end; display: flex; align-items: center; gap: 12px; }
+.gear { color: var(--text);  width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; background: var(--raise); font-size: 24px; }
+
+.bottombar { position: absolute; inset: auto 0 0 0; height: 84px; display: flex; align-items: center; gap: 34px; padding: 0 56px; z-index: 5;
+  background: linear-gradient(0deg, rgba(5,10,13,.85), rgba(5,10,13,0)); font-size: 23px; font-weight: 500; }
+.bottombar .right { margin-left: auto; }
+.hint { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.btn { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; font: 700 17px/1 var(--ui); color: #fff; flex: none; }
+.btn.a { background: #1a7d34; } .btn.b { background: #c42f2b; } .btn.x { background: #2266cc; } .btn.y { background: #e8b71a; color: #1d1600; }
+body.prompts-mono .btn.a, body.prompts-mono .btn.b, body.prompts-mono .btn.x, body.prompts-mono .btn.y { background: rgba(255,255,255,.14); color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.35); }
+body.prompts-mono .btn.a { color: #6fe08a; } body.prompts-mono .btn.b { color: #ff7a75; } body.prompts-mono .btn.x { color: #79b2ff; } body.prompts-mono .btn.y { color: #ffd65a; }
+.btn.pill { width: auto; min-width: 46px; padding: 0 9px; height: 28px; border-radius: 8px; background: rgba(255,255,255,.16); font-size: 14px; letter-spacing: .04em; }
+.btn.view { background: rgba(255,255,255,.16); color: #fff; }
+.btn.ic { background: rgba(255,255,255,.16); font-family: "Fluent"; font-size: 15px; font-weight: normal; }
+
+/* ---------- covers & selection ---------- */
+.cover { position: absolute; border-radius: var(--r-tile); background: #111a20 center/cover no-repeat; }
+.cover .badge { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(6,12,16,.72); font-size: 16px; color: #ffd65a; }
+.cover .badge.dl { color: var(--text); }
+.cover::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); pointer-events: none; }
+/* selection A: offset white ring */
+body.sel-ring .cover.sel::before { content: ""; position: absolute; inset: -7px; border-radius: calc(var(--r-tile) + 7px); border: 3px solid rgba(255,255,255,.92); }
+/* selection B: thin accent ring, tight */
+body.sel-accent .cover.sel::before { content: ""; position: absolute; inset: -4px; border-radius: calc(var(--r-tile) + 4px); border: 2.5px solid var(--accent-soft); }
+/* selection C: lift only (scale + brightness), neighbours dim more */
+body.sel-lift .cover:not(.sel) { filter: brightness(.72); }
+.cover .lbl { display: none; }
+
+/* ---------- carousel screen ---------- */
+.hero { position: absolute; left: 88px; top: 150px; width: 820px; }
+.hero .logo { height: 190px; width: 620px; background: left bottom/contain no-repeat; margin-bottom: 26px; transition: opacity var(--dur) var(--ease); }
+.hero .meta { font-size: 25px; color: var(--muted); font-weight: 400; display: flex; gap: 14px; align-items: center; }
+.hero .meta .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--faint); }
+.pills { display: flex; gap: 10px; margin-top: 20px; }
+.pillx { display: flex; align-items: center; gap: 9px; height: 44px; padding: 0 18px; border-radius: 999px; background: rgba(10,18,23,.72); box-shadow: inset 0 0 0 1px var(--line); font-size: 21px; font-weight: 500; }
+.pillx .ic { font-size: 18px; color: var(--muted); }
+.pillx.ok { color: var(--ok); } .pillx.ok .ic { color: var(--ok); }
+.strip { position: absolute; left: 0; right: 0; top: 560px; height: 440px; }
+body.r1610 .strip { top: 640px; }
+.strip .cover { width: 236px; height: 315px; left: 0; top: 60px; transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease), filter var(--dur) var(--ease); transform-origin: center bottom; }
+body.r1610 .hero { top: 170px; }
+
+/* ---------- library grid ---------- */
+.libmeta { position: absolute; left: 92px; top: 120px; font-size: 21px; color: var(--muted); display: flex; gap: 12px; align-items: center; }
+.libmeta .ic { font-size: 18px; }
+.grid { position: absolute; left: 88px; right: 120px; top: 170px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 26px 22px; }
+.grid .cover { position: relative; aspect-ratio: 3/4; transition: transform var(--dur) var(--ease), filter var(--dur) var(--ease); }
+.grid .cover.sel { transform: scale(1.04); z-index: 2; }
+body.sel-lift .grid .cover.sel { transform: scale(1.08); }
+.az { position: absolute; right: 46px; top: 176px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 17px; font-weight: 600; color: var(--faint); }
+.az .on { color: var(--on-accent); background: var(--accent); width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; }
+
+/* ---------- details ---------- */
+.det { position: absolute; inset: 0; display: grid; grid-template-columns: 340px 1fr 560px; gap: 56px; padding: 72px 72px 110px 88px; }
+.detscrim { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,16,19,.86), rgba(8,16,19,.72) 60%, rgba(8,16,19,.55)); }
+.det .cv { width: 340px; aspect-ratio: 2/3; border-radius: 16px; background: center/cover; box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); }
+.det .actions { display: flex; flex-direction: column; gap: 12px; margin-top: 22px; }
+.act { height: 64px; border-radius: var(--r-btn); display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 25px; font-weight: 600;
+  background: var(--raise); box-shadow: inset 0 0 0 1px var(--line); color: var(--text); position: relative; transition: background-color var(--dur) var(--ease); }
+.act .ic { font-size: 22px; }
+.act.primary { background: var(--accent); color: var(--on-accent); box-shadow: none; }
+.act.quiet { background: transparent; box-shadow: none; color: var(--muted); height: 52px; font-weight: 500; font-size: 22px; }
+.act.focus::before { content: ""; position: absolute; inset: -6px; border-radius: calc(var(--r-btn) + 6px); border: 3px solid rgba(255,255,255,.92); }
+body.sel-accent .act.focus::before { border-color: var(--accent-soft); border-width: 2.5px; inset: -4px; }
+body.sel-lift .act.focus { background: var(--raise-hi); } body.sel-lift .act.primary.focus { background: #6bb8ff; }
+body.sel-lift .act.focus::before { display: none; }
+.det h1 { font-size: 66px; font-weight: 600; letter-spacing: -.015em; line-height: 1.05; }
+.det .sub { margin-top: 14px; font-size: 24px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.det .sub .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--faint); }
+.det h2 { font-size: 21px; font-weight: 600; color: var(--muted); margin: 44px 0 12px; }
+.det .about { font-size: 23px; line-height: 1.55; color: #dfe5e8; max-width: 66ch; font-weight: 400; }
+.side { display: flex; flex-direction: column; gap: 18px; }
+.card { background: var(--panel); border-radius: 18px; box-shadow: inset 0 0 0 1px var(--line); padding: 22px 26px; }
+.card h3 { font-size: 20px; font-weight: 600; color: var(--muted); margin-bottom: 14px; }
+.kv { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+.kv .k { font-size: 17px; color: var(--faint); font-weight: 500; }
+.kv .v { font-size: 27px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.kv3 { grid-template-columns: 1fr 1fr 1fr; }
+.dl { display: grid; grid-template-columns: 150px 1fr; gap: 10px 16px; font-size: 21px; }
+.dl dt { color: var(--faint); } .dl dd { color: var(--text); }
+.bar { height: 8px; border-radius: 8px; background: rgba(255,255,255,.1); margin-top: 12px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 34%; background: var(--accent); border-radius: inherit; }
+
+/* ---------- sheets (filter, menu) ---------- */
+.dim { position: absolute; inset: 0; background: rgba(3,7,9,.62); z-index: 20; opacity: 0; visibility: hidden; transition: opacity var(--dur) ease, visibility 0s var(--dur); }
+.sheet { position: absolute; top: 20px; bottom: 20px; width: 600px; z-index: 21; display: flex; flex-direction: column; visibility: hidden; opacity: 0;
+  transition: transform calc(var(--dur) * 1.25) var(--ease), opacity var(--dur) ease, visibility 0s calc(var(--dur) * 1.25);
+  background: var(--panel-solid); border-radius: var(--r-panel); box-shadow: inset 0 0 0 1px rgba(255,255,255,.09), 0 24px 60px rgba(0,0,0,.45); padding: 34px 26px 0; }
+.sheet.right { right: 20px; transform: translateX(48px); } .sheet.left { left: 20px; width: 560px; transform: translateX(-48px); }
+.overlay-filter .dim, .overlay-menu .dim { opacity: 1; visibility: visible; transition-delay: 0s; }
+.overlay-filter #filter, .overlay-menu #menu { transform: none; opacity: 1; visibility: visible; transition-delay: 0s; }
+/* rows settle in just after the panel: one short stagger, menus only */
+.overlay-filter #filter .row, .overlay-menu #menu .row { animation: rowin calc(var(--dur) * 1.25) var(--ease) both; }
+.rows .row:nth-child(n+2) { animation-delay: 20ms; } .rows .row:nth-child(n+4) { animation-delay: 40ms; } .rows .row:nth-child(n+6) { animation-delay: 60ms; } .rows .row:nth-child(n+8) { animation-delay: 80ms; }
+@keyframes rowin { from { opacity: 0; transform: translateX(var(--rx, 16px)); } }
+#menu { --rx: -16px; }
+
+/* ---------- on-screen keyboard (Playnite TextInput: key layout is fixed by Playnite, styling is ours) ---------- */
+.kb { position: absolute; left: 50%; top: 50%; z-index: 21; width: 1180px; margin-left: -590px; transform: translateY(-46%); opacity: 0; visibility: hidden;
+  transition: transform calc(var(--dur) * 1.25) var(--ease), opacity var(--dur) ease, visibility 0s calc(var(--dur) * 1.25); }
+.overlay-keyboard .dim { opacity: 1; visibility: visible; transition-delay: 0s; }
+.overlay-keyboard .kb { transform: translateY(-50%); opacity: 1; visibility: visible; transition-delay: 0s; }
+.kb .field { display: flex; align-items: center; gap: 18px; height: 88px; padding: 0 28px; margin-bottom: 18px; border-radius: 18px; background: var(--panel-solid);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.09), 0 24px 60px rgba(0,0,0,.45); font-size: 34px; font-weight: 500; }
+.kb .field .ic { font-size: 28px; color: var(--muted); }
+.kb .field .ph { color: var(--faint); }
+.kb .caret { width: 3px; height: 38px; margin-left: -14px; border-radius: 2px; background: var(--accent); animation: blink 1.06s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.kb .field .count { margin-left: auto; font-size: 21px; color: var(--muted); }
+.kb .keys { display: grid; grid-template-columns: repeat(11, 1fr); grid-auto-rows: 82px; gap: 10px; padding: 20px; border-radius: var(--r-panel); background: var(--panel-solid);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.09), 0 24px 60px rgba(0,0,0,.45); }
+.key { position: relative; display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: 14px; background: var(--raise); font-size: 30px; font-weight: 500;
+  transition: background-color var(--dur) var(--ease); }
+.key.fn { font-size: 21px; font-weight: 600; background: rgba(255,255,255,.045); color: #dfe5e8; }
+.key.fn.v { flex-direction: column; gap: 10px; }
+.key .btn { width: 28px; height: 28px; font-size: 15px; }
+.key .btn.pill { height: 26px; min-width: 40px; font-size: 13px; }
+.key.focus { background: var(--raise-hi); }
+.key.focus::before { content: ""; position: absolute; inset: -5px; border-radius: 19px; border: 3px solid rgba(255,255,255,.92); }
+body.sel-accent .key.focus::before { border-color: var(--accent-soft); border-width: 2.5px; inset: -4px; }
+body.sel-lift .key.focus { background: rgba(255,255,255,.22); } body.sel-lift .key.focus::before { display: none; }
+.key.on { color: var(--accent-soft); }
+/* lowercase letters centre on x-height; digits and caps on cap height */
+.keys:not(.caps) .key.lc .t { text-box: trim-both ex alphabetic; }
+.kb .legend { display: flex; justify-content: center; gap: 30px; margin-top: 18px; font-size: 20px; font-weight: 500; color: var(--muted); }
+body.no-anim .row { animation: none !important; }
+.sheet h2 { font-size: 34px; font-weight: 600; padding: 0 14px 18px; display: flex; align-items: baseline; justify-content: space-between; }
+.sheet h2 small { font-size: 20px; color: var(--muted); font-weight: 500; }
+.rows { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+.row { position: relative; display: flex; align-items: center; gap: 18px; min-height: 66px; padding: 0 18px; border-radius: 14px; font-size: 24px; font-weight: 500; }
+.row .ic { font-size: 24px; color: var(--muted); width: 28px; text-align: center; }
+.row .val { margin-left: auto; color: var(--muted); font-size: 21px; display: flex; align-items: center; gap: 10px; }
+.row .val .ic { font-size: 15px; width: auto; }
+.row.focus { background: var(--raise-hi); }
+.sep { height: 1px; background: var(--line); margin: 10px 18px; }
+.lab { font-size: 18px; font-weight: 600; color: var(--faint); padding: 14px 18px 6px; }
+.sw { margin-left: auto; width: 58px; height: 32px; border-radius: 999px; background: rgba(255,255,255,.16); position: relative; flex: none; transition: background-color var(--dur) var(--ease); }
+.sw::after { content: ""; position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: #c8d1d5; transition: transform var(--dur) var(--ease); }
+.sw.on { background: var(--accent); } .sw.on::after { transform: translateX(26px); background: #fff; }
+.sheet .foot { margin-top: auto; display: flex; gap: 26px; padding: 22px 18px 26px; border-top: 1px solid var(--line); font-size: 21px; font-weight: 500; }
+.menuhead { display: flex; align-items: center; justify-content: space-between; padding: 0 18px 22px; }
+.menuhead .t { font-size: 46px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.menuhead .bat { display: flex; align-items: center; gap: 10px; font-size: 24px; color: var(--muted); }
+.menuhead .bat .ic { font-size: 30px; color: var(--text); }
+.sub-menu { display: none; } #menu.in-settings .main-menu { display: none; } #menu.in-settings .sub-menu { display: flex; }
+</style>
+</head>
+<body class="tab-line sel-ring">
+
+<div id="tools">
+  <span class="grp"><b>Screen</b><button data-k="screen" data-v="carousel">Recent</button><button data-k="screen" data-v="library">All games</button><button data-k="screen" data-v="details">Details</button><button data-k="ov" data-v="filter">Filter</button><button data-k="ov" data-v="menu">Menu</button><button data-k="ov" data-v="keyboard">Keyboard</button></span>
+  <span class="grp"><b>Font</b><button data-k="font" data-v="suv">Segoe UI Variable</button><button data-k="font" data-v="bahn">Bahnschrift</button><button data-k="font" data-v="titil">Titillium (current)</button></span>
+  <span class="grp"><b>Selection</b><button data-k="sel" data-v="ring">Ring</button><button data-k="sel" data-v="accent">Thin accent</button><button data-k="sel" data-v="lift">Lift only</button></span>
+  <span class="grp"><b>Tabs</b><button data-k="tab" data-v="line">Underline</button><button data-k="tab" data-v="pill">Soft pill</button><button data-k="tab" data-v="text">Text only</button></span>
+  <span class="grp"><b>Motion</b><button data-k="anim" data-v="on">Animated</button><button data-k="anim" data-v="off">Instant</button></span>
+  <span class="grp"><b>Prompts</b><button data-k="prompts" data-v="color">Colour</button><button data-k="prompts" data-v="mono">Mono</button></span>
+  <span class="grp"><b>Ratio</b><button data-k="ratio" data-v="169">16:9 Ally</button><button data-k="ratio" data-v="1610">16:10 Deck/Go</button></span>
+  <span class="note">Arrows / gamepad to move · Q/E or LB/RB tabs · Enter/A · Esc/B · F (RS) filter · M (View) settings menu · O (Menu) done on keyboard · H hide bar · sample data</span>
+</div>
+
+<div id="stage"><div id="device">
+  <div class="bg" id="bgA"></div><div class="bg" id="bgB" style="opacity:0"></div>
+  <div class="scrim"></div>
+
+  <header class="topbar" id="topbar">
+    <div class="status">
+      <span class="t" id="clock">21:47</span>
+      <span class="bat"><span class="ic">&#xE857;</span>78%</span>
+    </div>
+    <nav class="tabs">
+      <span class="btn pill sh">LB</span>
+      <span class="tab" data-tab="0">Recent</span><span class="tab" data-tab="1">All games</span><span class="tab" data-tab="2">Favorites</span><span class="tab" data-tab="3">Most played</span>
+      <span class="btn pill sh">RB</span>
+    </nav>
+    <span class="gearwrap"><span class="btn view"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="1.5" y="1.5" width="8.5" height="8.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="6" y="6" width="8.5" height="8.5" rx="1.6" fill="#3a4248" stroke="currentColor" stroke-width="1.5"/></svg></span><span class="gear ic">&#xE713;</span></span>
+  </header>
+
+  <!-- carousel (Recent / Favorites / Most played) -->
+  <section class="screen" id="s-carousel">
+    <div class="hero">
+      <div class="logo" id="heroLogo"></div>
+      <div class="meta" id="heroMeta"></div>
+      <div class="pills" id="heroPills"></div>
+    </div>
+    <div class="strip" id="strip"></div>
+  </section>
+
+  <!-- library grid (All games) -->
+  <section class="screen" id="s-library">
+    <div class="libmeta"><span>266 games</span><span class="dot" style="width:5px;height:5px;border-radius:50%;background:var(--faint)"></span><span class="ic">&#xE8CB;</span><span>Name A–Z</span></div>
+    <div class="grid" id="grid"></div>
+    <div class="az" id="az"></div>
+  </section>
+
+  <!-- details -->
+  <section class="screen" id="s-details">
+    <div class="detscrim"></div>
+    <div class="det">
+      <div>
+        <div class="cv" id="dCover"></div>
+        <div class="actions" id="dActions">
+          <div class="act primary"><span class="ic">&#xE768;</span>Play</div>
+          <div class="act"><span class="ic">&#xE712;</span>Game options</div>
+          <div class="act"><span class="ic">&#xE714;</span>Trailer</div>
+          <div class="act quiet"><span class="ic">&#xE734;</span>Add to favorites</div>
+        </div>
+      </div>
+      <div>
+        <h1 id="dTitle"></h1>
+        <div class="sub" id="dSub"></div>
+        <h2>About</h2>
+        <p class="about" id="dAbout"></p>
+      </div>
+      <div class="side">
+        <div class="card"><h3>Your activity</h3>
+          <div class="kv"><div><div class="k">Play time</div><div class="v" id="dTime"></div></div><div><div class="k">Last played</div><div class="v" id="dLast"></div></div>
+          <div><div class="k">Sessions</div><div class="v">21</div></div><div><div class="k">Status</div><div class="v">Playing</div></div></div></div>
+        <div class="card"><h3>Ratings</h3>
+          <div class="kv kv3"><div><div class="k">Community</div><div class="v">83</div></div><div><div class="k">Critic</div><div class="v">75</div></div><div><div class="k">You</div><div class="v" style="color:var(--faint)">—</div></div></div></div>
+        <div class="card"><h3>Details</h3>
+          <dl class="dl" id="dDl"></dl></div>
+        <div class="card"><h3>Achievements</h3>
+          <div style="font-size:22px;font-weight:500">15 of 44 unlocked</div><div class="bar"><i></i></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bottombar" id="bottombar"></footer>
+
+  <div class="dim"></div>
+  <aside class="sheet right" id="filter">
+    <h2>Filters <small>266 → 41 games</small></h2>
+    <div class="rows" id="fRows">
+      <div class="row"><span class="ic">&#xE896;</span>Installed only<span class="sw on"></span></div>
+      <div class="row"><span class="ic">&#xE734;</span>Favorites only<span class="sw"></span></div>
+      <div class="row"><span class="ic">&#xE7B3;</span>Show hidden<span class="sw"></span></div>
+      <div class="sep"></div>
+      <div class="row"><span class="ic">&#xE8F1;</span>Library<span class="val">Steam, Epic<span class="ic">&#xE76C;</span></span></div>
+      <div class="row"><span class="ic">&#xE7FC;</span>Platform<span class="val">PC (Windows)<span class="ic">&#xE76C;</span></span></div>
+      <div class="row"><span class="ic">&#xE8EC;</span>Genre<span class="val">Any<span class="ic">&#xE76C;</span></span></div>
+      <div class="sep"></div>
+      <div class="row"><span class="ic">&#xE8CB;</span>Sort by<span class="val">Name, A–Z<span class="ic">&#xE76C;</span></span></div>
+      <div class="row"><span class="ic">&#xF168;</span>Group by<span class="val">None<span class="ic">&#xE76C;</span></span></div>
+    </div>
+    <div class="foot"><span class="hint"><span class="btn a">A</span>Change</span><span class="hint"><span class="btn x">X</span>Clear all</span><span class="hint"><span class="btn b">B</span>Close</span></div>
+  </aside>
+
+  <div class="kb" id="kb">
+    <div class="field"><span class="ic">&#xE721;</span><span id="kbText"></span><span class="caret"></span></div>
+    <div class="keys" id="kbKeys"></div>
+  </div>
+
+  <aside class="sheet left" id="menu">
+    <div class="menuhead"><span class="t" id="clock2">21:47</span><span class="bat"><span class="ic">&#xE857;</span>78% · 2 h 40 min left</span></div>
+    <div class="rows main-menu" id="mRows">
+      <div class="row"><span class="ic">&#xE713;</span>Settings<span class="val"><span class="ic">&#xE76C;</span></span></div>
+      <div class="row"><span class="ic">&#xE895;</span>Update library</div>
+      <div class="row"><span class="ic">&#xE8B1;</span>Pick a random game</div>
+      <div class="row"><span class="ic">&#xE7F4;</span>Switch to Desktop mode</div>
+      <div class="sep"></div>
+      <div class="row"><span class="ic">&#xE921;</span>Minimize</div>
+      <div class="row"><span class="ic">&#xE708;</span>Sleep</div>
+      <div class="row"><span class="ic">&#xE777;</span>Restart PC</div>
+      <div class="row"><span class="ic">&#xE7E8;</span>Shut down PC</div>
+      <div class="sep"></div>
+      <div class="row"><span class="ic">&#xE711;</span>Exit Playnite</div>
+    </div>
+    <div class="rows sub-menu" id="sRows">
+      <div class="lab">Settings</div>
+      <div class="row"><span class="ic">&#xE80F;</span>General<span class="val"><span class="ic">&#xE76C;</span></span></div>
+      <div class="row"><span class="ic">&#xE790;</span>Visuals<span class="val"><span class="ic">&#xE76C;</span></span></div>
+      <div class="row"><span class="ic">&#xE767;</span>Audio<span class="val"><span class="ic">&#xE76C;</span></span></div>
+      <div class="row"><span class="ic">&#xF0E2;</span>Layout<span class="val"><span class="ic">&#xE76C;</span></span></div>
+      <div class="row"><span class="ic">&#xE700;</span>Menus<span class="val"><span class="ic">&#xE76C;</span></span></div>
+      <div class="row"><span class="ic">&#xE7FC;</span>Input<span class="val"><span class="ic">&#xE76C;</span></span></div>
+      <div class="row"><span class="ic">&#xE9D9;</span>Performance<span class="val"><span class="ic">&#xE76C;</span></span></div>
+    </div>
+    <div class="foot"><span class="hint"><span class="btn a">A</span>Select</span><span class="hint"><span class="btn b">B</span>Back</span></div>
+  </aside>
+</div></div>
+
+<script>
+const G = [
+  { id: 1091500, n: "Cyberpunk 2077", g: "Role-playing, Shooter", y: 2020, t: "10h 34m", l: "Today", fav: 1, ins: 1, dev: "CD Projekt Red", pub: "CD Projekt",
+    about: "Cyberpunk 2077 is an open-world action-adventure set in Night City, a megalopolis obsessed with power, glamour and body modification. You play V, a mercenary outlaw going after a one-of-a-kind implant that is the key to immortality." },
+  { id: 1145360, n: "Hades", g: "Roguelike, Action", y: 2020, t: "41h 12m", l: "Yesterday", fav: 1, ins: 1, dev: "Supergiant Games", pub: "Supergiant Games", about: "Defy the god of the dead as you hack and slash out of the Underworld in this rogue-like dungeon crawler." },
+  { id: 1245620, n: "Elden Ring", g: "Action RPG", y: 2022, t: "88h 05m", l: "Nov 9", fav: 0, ins: 1, dev: "FromSoftware", pub: "Bandai Namco", about: "Rise, Tarnished, and be guided by grace to brandish the power of the Elden Ring and become an Elden Lord in the Lands Between." },
+  { id: 553850, n: "Helldivers 2", g: "Shooter, Co-op", y: 2024, t: "23h 40m", l: "Nov 7", fav: 0, ins: 1, dev: "Arrowhead", pub: "Sony", about: "The Galaxy's Last Line of Offence. Enlist in the Helldivers and join the fight for freedom across a hostile galaxy." },
+  { id: 2379780, n: "Balatro", g: "Card game, Roguelike", y: 2024, t: "31h 18m", l: "Nov 4", fav: 1, ins: 1, dev: "LocalThunk", pub: "Playstack", about: "A poker-inspired roguelike deck builder all about creating powerful synergies and winning big." },
+  { id: 367520, n: "Hollow Knight", g: "Metroidvania", y: 2017, t: "19h 02m", l: "Oct 30", fav: 0, ins: 0, dev: "Team Cherry", pub: "Team Cherry", about: "Forge your own path in Hollow Knight, an epic action adventure through a vast ruined kingdom of insects and heroes." },
+  { id: 1086940, n: "Baldur's Gate 3", g: "Role-playing", y: 2023, t: "64h 51m", l: "Oct 22", fav: 1, ins: 1, dev: "Larian Studios", pub: "Larian Studios", about: "Gather your party and return to the Forgotten Realms in a tale of fellowship and betrayal, sacrifice and survival." },
+  { id: 413150, n: "Stardew Valley", g: "Simulation", y: 2016, t: "52h 30m", l: "Oct 11", fav: 0, ins: 1, dev: "ConcernedApe", pub: "ConcernedApe", about: "You've inherited your grandfather's old farm plot in Stardew Valley. Can you learn to live off the land?" },
+  { id: 504230, n: "Celeste", g: "Platformer", y: 2018, t: "9h 47m", l: "Sep 28", fav: 0, ins: 0, dev: "Maddy Makes Games", pub: "Maddy Makes Games", about: "Help Madeline survive her inner demons on her journey to the top of Celeste Mountain." },
+  { id: 814380, n: "Sekiro: Shadows Die Twice", g: "Action", y: 2019, t: "27h 15m", l: "Sep 2", fav: 0, ins: 1, dev: "FromSoftware", pub: "Activision", about: "Carve your own clever path to vengeance in this adventure from FromSoftware." },
+  { id: 1174180, n: "Red Dead Redemption 2", g: "Action, Adventure", y: 2019, t: "45h 00m", l: "Aug 19", fav: 0, ins: 0, dev: "Rockstar Games", pub: "Rockstar Games", about: "America, 1899. Arthur Morgan and the Van der Linde gang are outlaws on the run." },
+  { id: 730, n: "Counter-Strike 2", g: "Shooter", y: 2023, t: "112h 20m", l: "Aug 2", fav: 0, ins: 1, dev: "Valve", pub: "Valve", about: "For over two decades, Counter-Strike has offered an elite competitive experience." },
+];
+const art = (g, k) => `art/${g.id}_${k}.${k === "logo" ? "png" : "jpg"}`;
+const $ = s => document.querySelector(s);
+const st = { screen: "carousel", tab: 0, ov: null, sel: 0, gsel: 0, dfocus: 0, ffocus: 0, mfocus: 0 };
+const opts = { font: "suv", sel: "ring", tab: "line", anim: "on", prompts: "color", ratio: "169" };
+const libGames = [...G].sort((a, b) => a.n.localeCompare(b.n));
+const libTiles = [...libGames, ...libGames].slice(0, 21); // sample: repeats to fill three rows
+
+/* --- carousel --- */
+const strip = $("#strip");
+G.forEach((g, i) => {
+  const c = document.createElement("div");
+  c.className = "cover"; c.style.backgroundImage = `url(${art(g, "library_600x900")})`;
+  if (g.fav) c.innerHTML = '<span class="badge ic">&#xE735;</span>';
+  else if (!g.ins) c.innerHTML = '<span class="badge dl ic">&#xE896;</span>';
+  strip.appendChild(c);
+});
+function layoutStrip() {
+  const center = 860, gap = 262, extra = 70; // selected sits left of centre so the hero block has room
+  [...strip.children].forEach((c, i) => {
+    const d = i - st.sel, s = d === 0 ? 1.3 : 1;
+    const x = center + d * gap + Math.sign(d) * extra - 118;
+    c.style.transform = `translateX(${x}px) scale(${s})`;
+    c.style.opacity = Math.abs(d) > 5 ? 0 : d === 0 ? 1 : Math.max(.35, 1 - Math.abs(d) * .16);
+    c.classList.toggle("sel", d === 0);
+  });
+}
+/* --- grid --- */
+const grid = $("#grid");
+libTiles.forEach(g => { const c = document.createElement("div"); c.className = "cover"; c.style.backgroundImage = `url(${art(g, "library_600x900")})`; if (g.fav) c.innerHTML = '<span class="badge ic">&#xE735;</span>'; grid.appendChild(c); });
+$("#az").innerHTML = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".split("").map(ch => `<span>${ch}</span>`).join("");
+
+let bgFront = "A";
+function setBg(url) {
+  const front = $("#bg" + bgFront), back = $("#bg" + (bgFront === "A" ? "B" : "A"));
+  if (front.dataset.u === url) return;
+  back.style.backgroundImage = `url(${url})`; back.dataset.u = url;
+  back.style.opacity = 1; front.style.opacity = 0; bgFront = bgFront === "A" ? "B" : "A";
+}
+const cur = () => st.screen === "library" ? libTiles[st.gsel] : G[st.sel];
+
+function renderHero(g) {
+  $("#heroLogo").style.backgroundImage = `url(${art(g, "logo")})`;
+  $("#heroMeta").innerHTML = `<span>${g.g}</span><span class="dot"></span><span>${g.y}</span>`;
+  $("#heroPills").innerHTML =
+    `<span class="pillx"><span class="ic">&#xE916;</span>${g.t}</span><span class="pillx"><span class="ic">&#xE787;</span>${g.l}</span>` +
+    (g.ins ? `<span class="pillx ok"><span class="ic">&#xE73E;</span>Installed</span>` : `<span class="pillx"><span class="ic">&#xE896;</span>Not installed</span>`);
+}
+function renderDetails(g) {
+  $("#dCover").style.backgroundImage = `url(${art(g, "library_600x900")})`;
+  $("#dTitle").textContent = g.n;
+  $("#dSub").innerHTML = `<span>${g.g}</span><span class="dot"></span><span>${g.dev}</span><span class="dot"></span><span>${g.y}</span>`;
+  $("#dAbout").textContent = g.about;
+  $("#dTime").textContent = g.t; $("#dLast").textContent = g.l;
+  $("#dDl").innerHTML = `<dt>Developer</dt><dd>${g.dev}</dd><dt>Publisher</dt><dd>${g.pub}</dd><dt>Released</dt><dd>${g.y}</dd><dt>Platform</dt><dd>PC (Windows)</dd>`;
+  [...$("#dActions").children].forEach((a, i) => a.classList.toggle("focus", i === st.dfocus));
+}
+const BARS = {
+  browse: `<span class="hint"><span class="btn x">X</span>Play</span><span class="hint"><span class="btn a">A</span>Details</span><span class="hint"><span class="btn ic">&#xE700;</span>Game options</span><span class="hint"><span class="btn y">Y</span>Search</span><span class="hint"><span class="btn pill">RS</span>Filter</span>`,
+  details: `<span class="hint"><span class="btn a">A</span>Select</span><span class="hint"><span class="btn b">B</span>Back</span><span class="hint right"><span class="btn pill">LB</span><span class="btn pill">RB</span>Previous / next game</span>`,
+};
+function render() {
+  document.body.className = [`font-${opts.font}`, `sel-${opts.sel}`, `tab-${opts.tab}`, opts.anim === "off" ? "no-anim" : "", `prompts-${opts.prompts}`, opts.ratio === "1610" ? "r1610" : "", st.ov ? `overlay-${st.ov}` : "", document.body.classList.contains("hide-tools") ? "hide-tools" : ""].join(" ");
+  document.querySelectorAll("#tools button").forEach(b => {
+    const k = b.dataset.k, v = b.dataset.v;
+    b.setAttribute("aria-pressed", k === "screen" ? st.screen === v && !st.ov : k === "ov" ? st.ov === v : opts[k] === v);
+  });
+  ["carousel", "library", "details"].forEach(s => $("#s-" + s).classList.toggle("on", st.screen === s));
+  $("#topbar").style.display = st.screen === "details" ? "none" : "";
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("sel", +t.dataset.tab === st.tab));
+  const g = cur();
+  if (st.screen === "carousel") { layoutStrip(); renderHero(g); }
+  if (st.screen === "library") { [...grid.children].forEach((c, i) => c.classList.toggle("sel", i === st.gsel)); const ch = g.n[0].toUpperCase(); [...$("#az").children].forEach(s => s.classList.toggle("on", s.textContent === ch)); }
+  if (st.screen === "details") renderDetails(g);
+  setBg(art(g, "library_hero"));
+  $("#bottombar").innerHTML = (st.screen === "details" ? BARS.details : BARS.browse) + (st.screen === "details" ? "" : `<span class="hint right"><span class="btn pill">LB</span><span class="btn pill">RB</span>Tabs</span>`);
+  [...$("#fRows").querySelectorAll(".row")].forEach((r, i) => r.classList.toggle("focus", i === st.ffocus));
+  const menuRows = $("#menu").classList.contains("in-settings") ? $("#sRows") : $("#mRows");
+  document.querySelectorAll("#menu .row").forEach(r => r.classList.remove("focus"));
+  const mr = menuRows.querySelectorAll(".row"); if (mr[st.mfocus]) mr[st.mfocus].classList.add("focus");
+  renderKb();
+  wrapLabels($("#device"));
+  fit();
+}
+// wrap bare label text next to icons/prompts in .t so it can be trimmed to cap height
+function wrapLabels(root) {
+  root.querySelectorAll(".ic, .btn").forEach(icon => {
+    [...icon.parentNode.childNodes].forEach(n => {
+      if (n.nodeType === 3 && n.textContent.trim()) { const sp = document.createElement("span"); sp.className = "t"; n.replaceWith(sp); sp.appendChild(n); }
+    });
+  });
+}
+function fit() {
+  const dev = $("#device"), stage = $("#stage");
+  const s = Math.min(stage.clientWidth / 1920, stage.clientHeight / dev.offsetHeight);
+  dev.style.transform = `scale(${s})`;
+}
+function setTab(t) { st.tab = (t + 4) % 4; st.screen = st.tab === 1 ? "library" : "carousel"; render(); }
+
+function input(k) {
+  const clamp = (v, n) => Math.max(0, Math.min(n - 1, v));
+  if (st.ov === "filter") {
+    const rows = $("#fRows").querySelectorAll(".row");
+    if (k === "up") st.ffocus = clamp(st.ffocus - 1, rows.length);
+    if (k === "down") st.ffocus = clamp(st.ffocus + 1, rows.length);
+    if (k === "a") { const sw = rows[st.ffocus].querySelector(".sw"); if (sw) sw.classList.toggle("on"); }
+    if (k === "b" || k === "rs") st.ov = null;
+    return render();
+  }
+  if (st.ov === "menu") {
+    const m = $("#menu"), inS = m.classList.contains("in-settings");
+    const rows = (inS ? $("#sRows") : $("#mRows")).querySelectorAll(".row");
+    if (k === "up") st.mfocus = clamp(st.mfocus - 1, rows.length);
+    if (k === "down") st.mfocus = clamp(st.mfocus + 1, rows.length);
+    if (k === "a" && !inS && st.mfocus === 0) { m.classList.add("in-settings"); st.mfocus = 0; }
+    if (k === "b") { if (inS) { m.classList.remove("in-settings"); st.mfocus = 0; } else st.ov = null; }
+    if (k === "menu") { m.classList.remove("in-settings"); st.ov = null; }
+    return render();
+  }
+  if (st.ov === "keyboard") return kbInput(k);
+  if (k === "y" && st.screen !== "details") { st.ov = "keyboard"; kbs.r = kbs.c = 0; return render(); }
+  if (k === "rs" && st.screen !== "details") { st.ov = "filter"; st.ffocus = 0; return render(); }
+  if (k === "menu") { st.ov = "menu"; st.mfocus = 0; return render(); }
+  if (st.screen === "details") {
+    if (k === "up") st.dfocus = clamp(st.dfocus - 1, 4);
+    if (k === "down") st.dfocus = clamp(st.dfocus + 1, 4);
+    if (k === "b") { st.screen = st.tab === 1 ? "library" : "carousel"; }
+    if (k === "lb" || k === "rb") { const d = k === "lb" ? -1 : 1; if (st.tab === 1) st.gsel = clamp(st.gsel + d, libTiles.length); else st.sel = clamp(st.sel + d, G.length); }
+    return render();
+  }
+  if (k === "lb") return setTab(st.tab - 1);
+  if (k === "rb") return setTab(st.tab + 1);
+  if (k === "x" || k === "a") { st.screen = "details"; st.dfocus = 0; return render(); }
+  if (st.screen === "carousel") {
+    if (k === "left") st.sel = clamp(st.sel - 1, G.length);
+    if (k === "right") st.sel = clamp(st.sel + 1, G.length);
+  } else {
+    const n = libTiles.length;
+    if (k === "left") st.gsel = clamp(st.gsel - 1, n);
+    if (k === "right") st.gsel = clamp(st.gsel + 1, n);
+    if (k === "up") st.gsel = st.gsel - 7 >= 0 ? st.gsel - 7 : st.gsel;
+    if (k === "down") st.gsel = st.gsel + 7 < n ? st.gsel + 7 : st.gsel;
+  }
+  render();
+}
+
+const KEYS = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down", Enter: "a", " ": "a", Escape: "b", Backspace: "b", q: "lb", e: "rb", f: "rs", m: "menu", o: "start", x: "x", y: "y" };
+addEventListener("keydown", ev => {
+  if (ev.key === "h") { document.body.classList.toggle("hide-tools"); return fit(); }
+  const k = KEYS[ev.key]; if (k) { ev.preventDefault(); input(k); }
+});
+document.querySelectorAll("#tools button").forEach(b => b.onclick = () => {
+  const k = b.dataset.k, v = b.dataset.v;
+  if (k === "screen") { st.ov = null; st.screen = v; st.tab = v === "library" ? 1 : st.tab === 1 ? 0 : st.tab; }
+  else if (k === "ov") { st.ov = st.ov === v ? null : v; st.ffocus = st.mfocus = 0; $("#menu").classList.remove("in-settings"); }
+  else opts[k] = v;
+  render(); b.blur();
+});
+addEventListener("resize", fit);
+
+/* gamepad: standard mapping, edge-triggered with stick repeat */
+/* keyboard model: mirrors Playnite's TextInputWindow.xaml grid (11 columns x 5 rows) */
+const KB = [];
+"1234567890".split("").forEach((ch, c) => KB.push({ r: 0, c, ch }));
+KB.push({ r: 0, c: 10, fn: "bs", html: '<span class="btn x">X</span><span class="ic" style="font-size:24px">&#xE750;</span>' });
+"qwertyuiop".split("").forEach((ch, c) => KB.push({ r: 1, c, ch }));
+KB.push({ r: 1, c: 10, rs: 2, fn: "done", v: 1, html: '<span class="btn ic">&#xE700;</span><span class="t">Done</span>' });
+"asdfghjkl-".split("").forEach((ch, c) => KB.push({ r: 2, c, ch }));
+"zxcvbnm;:!".split("").forEach((ch, c) => KB.push({ r: 3, c, ch }));
+KB.push({ r: 3, c: 10, rs: 2, fn: "cancel", v: 1, html: '<span class="btn b">B</span><span class="t">Cancel</span>' });
+KB.push({ r: 4, c: 0, cs: 2, fn: "caps", html: '<span class="btn pill">RS</span><span class="t">Caps</span>' });
+KB.push({ r: 4, c: 2, cs: 6, fn: "space", html: '<span class="btn y">Y</span><span class="t">Space</span>' });
+KB.push({ r: 4, c: 8, cs: 2, fn: "clear", html: '<span class="btn pill">LB</span><span class="t">Clear</span>' });
+const kbCell = (r, c) => KB.findIndex(k => r >= k.r && r < k.r + (k.rs || 1) && c >= k.c && c < k.c + (k.cs || 1));
+const kbs = { r: 0, c: 0, text: "hol", caps: false };
+$("#kbKeys").innerHTML = KB.map(k => `<div class="key${k.fn ? " fn" : ""}${k.v ? " v" : ""}${k.ch && /[a-z]/.test(k.ch) ? " lc" : ""}" style="grid-row:${k.r + 1} / span ${k.rs || 1};grid-column:${k.c + 1} / span ${k.cs || 1}">${k.fn ? k.html : '<span class="t">' + k.ch + "</span>"}</div>`).join("");
+function renderKb() {
+  const keys = $("#kbKeys").children, fi = kbCell(kbs.r, kbs.c);
+  KB.forEach((k, i) => {
+    keys[i].classList.toggle("focus", i === fi);
+    if (k.ch) keys[i].firstChild.textContent = kbs.caps ? k.ch.toUpperCase() : k.ch;
+    if (k.fn === "caps") keys[i].classList.toggle("on", kbs.caps);
+  });
+  $("#kbKeys").classList.toggle("caps", kbs.caps);
+  $("#kbText").innerHTML = kbs.text ? kbs.text.replace(/&/g, "&amp;").replace(/</g, "&lt;") : '<span class="ph">Search games</span>';
+}
+function kbPress(fn, ch) {
+  if (ch) kbs.text += kbs.caps ? ch.toUpperCase() : ch;
+  if (fn === "bs") kbs.text = kbs.text.slice(0, -1);
+  if (fn === "space") kbs.text += " ";
+  if (fn === "clear") kbs.text = "";
+  if (fn === "caps") kbs.caps = !kbs.caps;
+  if (fn === "done" || fn === "cancel") st.ov = null;
+}
+function kbInput(k) {
+  const key = KB[kbCell(kbs.r, kbs.c)];
+  const move = (dr, dc) => { // step out of the current (possibly spanned) key in one direction
+    let r = kbs.r, c = kbs.c; const cur = kbCell(r, c);
+    do { r += dr; c += dc; } while (r >= 0 && r < 5 && c >= 0 && c < 11 && kbCell(r, c) === cur);
+    if (r >= 0 && r < 5 && c >= 0 && c < 11) { kbs.r = r; kbs.c = c; }
+  };
+  if (k === "up") move(-1, 0); if (k === "down") move(1, 0); if (k === "left") move(0, -1); if (k === "right") move(0, 1);
+  if (k === "a") kbPress(key.fn, key.ch);
+  if (k === "x") kbPress("bs"); if (k === "y") kbPress("space"); if (k === "lb") kbPress("clear"); if (k === "rs") kbPress("caps");
+  if (k === "start") kbPress("done"); if (k === "b") kbPress("cancel");
+  render();
+}
+const GP = { 0: "a", 1: "b", 2: "x", 4: "lb", 5: "rb", 9: "start", 8: "menu", 3: "y", 11: "rs", 12: "up", 13: "down", 14: "left", 15: "right" };
+let prev = {}, repeatAt = 0;
+(function poll(t) {
+  const pad = [...(navigator.getGamepads?.() || [])].find(Boolean);
+  if (pad) {
+    for (const [i, k] of Object.entries(GP)) { const p = pad.buttons[i]?.pressed; if (p && !prev[i]) input(k); prev[i] = p; }
+    const [ax, ay] = pad.axes; const dir = Math.abs(ax) > .6 ? (ax < 0 ? "left" : "right") : Math.abs(ay) > .6 ? (ay < 0 ? "up" : "down") : null;
+    if (dir && t > repeatAt) { input(dir); repeatAt = t + (prev.stick === dir ? 140 : 380); }
+    prev.stick = dir;
+  }
+  requestAnimationFrame(poll);
+})(0);
+
+const tick = () => { const d = new Date(), s = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); $("#clock").textContent = s; $("#clock2").textContent = s; };
+tick(); setInterval(tick, 30000);
+// ?screen=details&ov=filter&font=bahn&hide=1 — preset state for screenshots and sharing
+const qp = new URLSearchParams(location.search);
+for (const k of Object.keys(opts)) if (qp.has(k)) opts[k] = qp.get(k);
+if (qp.has("screen")) { st.screen = qp.get("screen"); st.tab = st.screen === "library" ? 1 : 0; }
+if (qp.has("ov")) st.ov = qp.get("ov");
+if (qp.has("i")) { st.sel = st.gsel = +qp.get("i"); }
+if (qp.has("hide")) document.body.classList.add("hide-tools");
+render();
+</script>
+</body>
+</html>

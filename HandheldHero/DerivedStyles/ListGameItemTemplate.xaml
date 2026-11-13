@@ -9,7 +9,7 @@
         Rounded corners come from a plain geometry clip sized to the tile (no brushes, masks or extra layers,
         so nothing can flash behind a cover while the list scrolls).
         Unselected covers stay quiet: a thin dark edge and no glow.
-        Badges: gold star = favorite, green PLAYING = running now, download arrow = not installed.
+        Badges (Segoe Fluent Icons): star = favorite, green Playing = running now, download arrow = not installed.
     -->
     <Style x:Key="ListGameItemTemplate" TargetType="{x:Type GameListItem}">
         <Setter Property="Template">
@@ -41,19 +41,22 @@
 
                         <!-- badges -->
                         <Border x:Name="BadgeFavorite" Visibility="Collapsed" HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Margin="0,8,8,0" Padding="7,1,7,3" CornerRadius="11" Background="#CC081013"
+                                Margin="0,9,9,0" Width="34" Height="34" CornerRadius="17" Background="#B8060C10"
                                 IsHitTestVisible="False">
-                            <TextBlock Text="&#x2605;" FontFamily="Segoe UI Symbol" FontSize="17" Foreground="#FFFFD451" />
+                            <TextBlock Text="&#xE735;" FontFamily="{DynamicResource FontIcons}" FontSize="16" Foreground="#FFFFD65A"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <Border x:Name="BadgeRunning" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top"
-                                Margin="8,8,0,0" Padding="10,1,10,3" CornerRadius="11" Background="#E02FB04A"
+                                Margin="9,9,0,0" Height="30" Padding="12,0" CornerRadius="15" Background="#E61A7D34"
                                 IsHitTestVisible="False">
-                            <TextBlock Text="PLAYING" FontFamily="{DynamicResource FontTitilliumWebBold}" FontSize="15" Foreground="White" />
+                            <TextBlock Text="Playing" FontFamily="{DynamicResource FontUI}" FontWeight="SemiBold" FontSize="16" Foreground="White"
+                                       VerticalAlignment="Center" />
                         </Border>
                         <Border x:Name="BadgeNotInstalled" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Top"
-                                Margin="8,8,0,0" Padding="7,1,7,3" CornerRadius="11" Background="#CC081013"
+                                Margin="9,9,0,0" Width="34" Height="34" CornerRadius="17" Background="#B8060C10"
                                 IsHitTestVisible="False">
-                            <TextBlock Text="&#x2B07;" FontFamily="Segoe UI Symbol" FontSize="17" Foreground="#FF8CC8FF" />
+                            <TextBlock Text="&#xE896;" FontFamily="{DynamicResource FontIcons}" FontSize="16" Foreground="#FFF4F7F8"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
 
                         <!-- thin dark edge for unselected covers -->

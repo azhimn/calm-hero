@@ -6,10 +6,11 @@
 
     <!--
         Item container for the stock game grid (ALL GAMES).
-        Only the selected cover is raised (1.04x, 180 ms) and framed by the Aurora Trace.
-        NOTE: Playnite parses each theme file on its own, so values are written literally here instead of
-        pointing at Constants.xaml with StaticResource.
-        Neighbouring covers keep their full size and stay visually quiet.
+        Selection = "Lift" by default: the selected cover grows to 1.06x and every other cover is dimmed by a
+        plain black layer. The ring is drawn only when a Theme Options preset gives SelectionRingThickness a
+        value. No shader effects, so it stays cheap on handheld iGPUs.
+        Durations are literal: Playnite parses each theme file on its own, and storyboards in templates can't
+        take resource values.
     -->
     <Style x:Key="ListGameItemStyle" TargetType="ListBoxItem">
         <Setter Property="Background" Value="Transparent" />
@@ -22,14 +23,22 @@
                     <ControlTemplate.Resources>
                         <Storyboard x:Key="SelectedOn">
                             <DoubleAnimation Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleX"
-                                             To="1.04" Duration="0:0:0.18" />
+                                             To="1.06" Duration="0:0:0.22">
+                                <DoubleAnimation.EasingFunction><ExponentialEase EasingMode="EaseOut" Exponent="5" /></DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
                             <DoubleAnimation Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleY"
-                                             To="1.04" Duration="0:0:0.18" />
+                                             To="1.06" Duration="0:0:0.22">
+                                <DoubleAnimation.EasingFunction><ExponentialEase EasingMode="EaseOut" Exponent="5" /></DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation Storyboard.TargetName="DimHost" Storyboard.TargetProperty="Opacity"
+                                             To="0" Duration="0:0:0.18" />
                         </Storyboard>
                         <Storyboard x:Key="SelectedOff">
                             <DoubleAnimation Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleX"
                                              To="1" Duration="0:0:0.18" />
                             <DoubleAnimation Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleY"
+                                             To="1" Duration="0:0:0.18" />
+                            <DoubleAnimation Storyboard.TargetName="DimHost" Storyboard.TargetProperty="Opacity"
                                              To="1" Duration="0:0:0.18" />
                         </Storyboard>
                     </ControlTemplate.Resources>
@@ -40,15 +49,22 @@
                             <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1" />
                         </Grid.RenderTransform>
 
-                        <!-- identical cover size for every item -->
                         <ContentPresenter />
 
-                        <!-- Aurora Trace selection frame (animates only while selected) -->
-                        <ContentControl Style="{DynamicResource AuroraTrace}" Margin="-5" />
+                        <!-- dim layer for unselected covers (strength from Constants: UnselectedDimOpacity) -->
+                        <Grid x:Name="DimHost" IsHitTestVisible="False">
+                            <Border CornerRadius="10" Background="Black" Opacity="{DynamicResource UnselectedDimOpacity}" />
+                        </Grid>
+
+                        <!-- optional ring (Ring / Thin accent presets) -->
+                        <Border x:Name="Ring" Margin="-7" CornerRadius="16" IsHitTestVisible="False" Visibility="Hidden"
+                                BorderThickness="{DynamicResource SelectionRingThickness}"
+                                BorderBrush="{DynamicResource SelectionRingBrush}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Canvas.ZIndex" Value="90" />
+                            <Setter TargetName="Ring" Property="Visibility" Value="Visible" />
                             <Trigger.EnterActions>
                                 <BeginStoryboard x:Name="SelectedAnimation" Storyboard="{StaticResource SelectedOn}" />
                             </Trigger.EnterActions>

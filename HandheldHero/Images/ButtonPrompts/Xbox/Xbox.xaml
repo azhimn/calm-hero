@@ -2,48 +2,68 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--
-        Controller prompts. Face buttons are drawn as coloured discs (A green, B red, X blue, Y yellow)
-        so they read like the reference mock-ups. Shoulders, triggers and sticks keep the Xbox glyph font.
+        Controller prompts. Face buttons are discs whose fill and letter colours come from Constants.xaml
+        (PromptXBrush / PromptXTextBrush), so the Theme Options "Prompts" preset can switch between
+        mono (dark disc, coloured letter; default) and colour (filled disc, white letter).
+        Shoulders, triggers and sticks keep Playnite's Xbox glyph font.
     -->
 
+    <!-- Playnite's on-screen keyboard is the only place prompts get a 22 px slot (icon + label keys); it hard-codes a 5 px
+         gap before the label, so widen it here -->
+    <Style x:Key="PromptKeyboardGap" TargetType="Viewbox">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Height, RelativeSource={RelativeSource AncestorType=ContentControl}}" Value="22">
+                <Setter Property="Margin" Value="0,0,6,0" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <DataTemplate x:Key="ButtonPromptA">
+        <Viewbox Stretch="Uniform">
         <Grid Width="30" Height="30">
-            <Ellipse Fill="#FF2FB04A" />
-            <Ellipse Stroke="#55FFFFFF" StrokeThickness="1" />
-            <TextBlock Text="A" FontFamily="{DynamicResource FontTitilliumWebBold}" FontSize="19"
-                       Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0" />
+            <Ellipse Fill="{DynamicResource PromptABrush}" />
+            <Ellipse Stroke="{DynamicResource PromptRingBrush}" StrokeThickness="1.5" />
+            <TextBlock Text="A" FontFamily="{DynamicResource FontUI}" FontWeight="Bold" FontSize="17"
+                       Foreground="{DynamicResource PromptATextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0" />
         </Grid>
+        </Viewbox>
     </DataTemplate>
 
     <DataTemplate x:Key="ButtonPromptB">
+        <Viewbox Stretch="Uniform">
         <Grid Width="30" Height="30">
-            <Ellipse Fill="#FFD7403C" />
-            <Ellipse Stroke="#55FFFFFF" StrokeThickness="1" />
-            <TextBlock Text="B" FontFamily="{DynamicResource FontTitilliumWebBold}" FontSize="19"
-                       Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0" />
+            <Ellipse Fill="{DynamicResource PromptBBrush}" />
+            <Ellipse Stroke="{DynamicResource PromptRingBrush}" StrokeThickness="1.5" />
+            <TextBlock Text="B" FontFamily="{DynamicResource FontUI}" FontWeight="Bold" FontSize="17"
+                       Foreground="{DynamicResource PromptBTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0" />
         </Grid>
+        </Viewbox>
     </DataTemplate>
 
     <DataTemplate x:Key="ButtonPromptX">
+        <Viewbox Style="{StaticResource PromptKeyboardGap}" Stretch="Uniform">
         <Grid Width="30" Height="30">
-            <Ellipse Fill="#FF2E78E6" />
-            <Ellipse Stroke="#55FFFFFF" StrokeThickness="1" />
-            <TextBlock Text="X" FontFamily="{DynamicResource FontTitilliumWebBold}" FontSize="19"
-                       Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0" />
+            <Ellipse Fill="{DynamicResource PromptXBrush}" />
+            <Ellipse Stroke="{DynamicResource PromptRingBrush}" StrokeThickness="1.5" />
+            <TextBlock Text="X" FontFamily="{DynamicResource FontUI}" FontWeight="Bold" FontSize="17"
+                       Foreground="{DynamicResource PromptXTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0" />
         </Grid>
+        </Viewbox>
     </DataTemplate>
 
     <DataTemplate x:Key="ButtonPromptY">
+        <Viewbox Style="{StaticResource PromptKeyboardGap}" Stretch="Uniform">
         <Grid Width="30" Height="30">
-            <Ellipse Fill="#FFE8B71A" />
-            <Ellipse Stroke="#55FFFFFF" StrokeThickness="1" />
-            <TextBlock Text="Y" FontFamily="{DynamicResource FontTitilliumWebBold}" FontSize="19"
-                       Foreground="#FF1B1500" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0" />
+            <Ellipse Fill="{DynamicResource PromptYBrush}" />
+            <Ellipse Stroke="{DynamicResource PromptRingBrush}" StrokeThickness="1.5" />
+            <TextBlock Text="Y" FontFamily="{DynamicResource FontUI}" FontWeight="Bold" FontSize="17"
+                       Foreground="{DynamicResource PromptYTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0" />
         </Grid>
+        </Viewbox>
     </DataTemplate>
 
     <DataTemplate x:Key="ButtonPromptLB">
-        <Viewbox>
+        <Viewbox Style="{StaticResource PromptKeyboardGap}">
             <TextBlock FontFamily="{DynamicResource FontXboxOneController}"
                         Foreground="{DynamicResource TextBrush}"
                         Text="f" />
@@ -99,7 +119,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ButtonPromptRS">
-        <Viewbox>
+        <Viewbox Style="{StaticResource PromptKeyboardGap}">
             <TextBlock FontFamily="{DynamicResource FontXboxOneController}"
                         Foreground="{DynamicResource TextBrush}"
                         Text="x" />

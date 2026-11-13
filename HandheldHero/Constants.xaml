@@ -8,12 +8,12 @@
 
     <Color x:Key="BlackColor">#FF000000</Color>
     <Color x:Key="WhiteColor">#FFFFFFFF</Color>
-    <Color x:Key="GlyphColor">#FF00BFE7</Color>
-    <Color x:Key="GlyphLightColor">#FF58E7F5</Color>
-    <Color x:Key="SelectionLightColor">#FF73D8E5</Color>
+    <Color x:Key="GlyphColor">#FF3FA2FF</Color>
+    <Color x:Key="GlyphLightColor">#FF8CC8FF</Color>
+    <Color x:Key="SelectionLightColor">#FF8CC8FF</Color>
     <Color x:Key="OverlayColor">#D9080D11</Color>
     
-    <Color x:Key="ControlBackgroundColor">#FF18232A</Color>
+    <Color x:Key="ControlBackgroundColor">#FF1C262D</Color>
     <Color x:Key="ControlBackgroundColorDark">#FF0B1116</Color>
 
     <Color x:Key="TextColor">#FFF4F7F8</Color>
@@ -38,27 +38,67 @@
     <SolidColorBrush x:Key="PanelBorderBrush" Color="#6648A7FF" />
 
     <!--
-        AURORA TRACE settings (selection frame) - reference values.
-        Colours, comet length (12 % of the perimeter) and the 3 s clockwise loop live in the "AuroraTrace"
-        template in Media.xaml (regenerate with tools/build_aurora.py).
-        The 1.04x selected-cover scale and 180 ms focus transition are written literally in
-        DerivedStyles/ListGameItemStyle.xaml and Views/Main.xaml (Playnite parses each file on its own, so
-        a StaticResource pointing at this file would stop the theme from loading).
-        Frame: cool white #EAF6FF, 2.5 px at 1080p     Comet: #27CFFF > #965BFF > #FF48D0     Glow: ~8 px
+        Typography. Playnite can't load fonts shipped inside a theme, so these are Windows system fonts.
+        Segoe UI Variable ships with Windows 11; Windows 10 falls back to Segoe UI.
+        Icons use Segoe Fluent Icons (Windows 11) with Segoe MDL2 Assets as the Windows 10 fallback.
+        Theme Options presets (Options/Fonts/*.xaml) can replace FontUI.
     -->
-    <sys:Double x:Key="AuroraSelectedScale">1.04</sys:Double>
-    <Duration x:Key="AuroraFocusDuration">0:0:0.18</Duration>
+    <FontFamily x:Key="FontUI">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <FontFamily x:Key="FontIcons">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
     <sys:Double x:Key="FontSizeSmall">18</sys:Double>
     <sys:Double x:Key="FontSize">22</sys:Double>
 
-    <sys:Double x:Key="FilterPanelWidth">250</sys:Double>
+    <!-- Surfaces (shared by cards, side panels, keyboard, dialogs) -->
+    <SolidColorBrush x:Key="SurfaceBrush" Color="#FF0F171D" />
+    <SolidColorBrush x:Key="SurfaceTranslucentBrush" Color="#DB0F171D" />
+    <SolidColorBrush x:Key="SurfaceLineBrush" Color="#17FFFFFF" />
+    <SolidColorBrush x:Key="RaisedBrush" Color="#12FFFFFF" />
+    <SolidColorBrush x:Key="RaisedHighBrush" Color="#21FFFFFF" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#FFA7B2B8" />
+    <SolidColorBrush x:Key="TextFaintBrush" Color="#FF76838A" />
+    <SolidColorBrush x:Key="OnAccentBrush" Color="#FF04111D" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#FF5BD18B" />
+    <SolidColorBrush x:Key="ScrimBrush" Color="#9E030709" />
+
+    <!--
+        Selection style. Default = "Lift": the focused cover grows, the others are dimmed, no ring.
+        Theme Options presets swap these values for the "Ring" and "Thin accent" styles.
+    -->
+    <Thickness x:Key="SelectionRingThickness">0</Thickness>
+    <SolidColorBrush x:Key="SelectionRingBrush" Color="#EBFFFFFF" />
+    <sys:Double x:Key="UnselectedDimOpacity">0.28</sys:Double>
+    <SolidColorBrush x:Key="FocusFillBrush" Color="#21FFFFFF" />
+
+    <!-- Carousel slide when the selection moves. Theme Options "Carousel movement: Instant" sets 0. -->
+    <Duration x:Key="CarouselSlideDuration">0:0:0.24</Duration>
+
+    <!-- Tab style. Default = "Underline". Presets: soft pill, text only. -->
+    <sys:Double x:Key="TabUnderlineOpacity">1</sys:Double>
+    <SolidColorBrush x:Key="TabPillBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="TabInactiveBrush" Color="#94F4F7F8" />
+
+    <!--
+        Face-button prompts. Default = "Mono": dark disc, letter in the button colour.
+        The "Colour" preset swaps in filled discs with white letters.
+    -->
+    <SolidColorBrush x:Key="PromptABrush" Color="#24FFFFFF" />
+    <SolidColorBrush x:Key="PromptBBrush" Color="#24FFFFFF" />
+    <SolidColorBrush x:Key="PromptXBrush" Color="#24FFFFFF" />
+    <SolidColorBrush x:Key="PromptYBrush" Color="#24FFFFFF" />
+    <SolidColorBrush x:Key="PromptATextBrush" Color="#FF6FE08A" />
+    <SolidColorBrush x:Key="PromptBTextBrush" Color="#FFFF7A75" />
+    <SolidColorBrush x:Key="PromptXTextBrush" Color="#FF79B2FF" />
+    <SolidColorBrush x:Key="PromptYTextBrush" Color="#FFFFD65A" />
+    <SolidColorBrush x:Key="PromptRingBrush" Color="#59FFFFFF" />
+
+    <sys:Double x:Key="FilterPanelWidth">480</sys:Double>
     
     <GridLength x:Key="ProgressWindowWidth">640</GridLength>
     
     <Style x:Key="TextBlockBaseStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{DynamicResource FontSize}" />
-        <Setter Property="FontFamily" Value="{DynamicResource FontTitilliumWebLight}" />
+        <Setter Property="FontFamily" Value="{DynamicResource FontUI}" />
         <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
     </Style>
 
@@ -79,15 +119,11 @@
         <GradientStop Color="#EA0A1014" Offset="1.0"/>
     </LinearGradientBrush>
 
-    <LinearGradientBrush x:Key="OverlayMenuBackgroundBrush" StartPoint="0.5,0" EndPoint="0.5,1.5" >
-        <GradientStop Color="#F0141C21" Offset="0"/>
-        <GradientStop Color="#FF070B0E" Offset="1.0"/>
-    </LinearGradientBrush>
+    <!-- every overlay panel (menus, filters, dialogs) sits on the same solid surface -->
+    <SolidColorBrush x:Key="OverlayMenuBackgroundBrush" Color="#FA0F171D" />
 
-    <LinearGradientBrush x:Key="SelectionBrush" StartPoint="0,0" EndPoint="1,1" >
-        <GradientStop Color="{DynamicResource GlyphColor}" Offset="0"/>
-        <GradientStop Color="{DynamicResource GlyphLightColor}" Offset="1.0"/>
-    </LinearGradientBrush>
+    <!-- focus outline used by Playnite's stock controls -->
+    <SolidColorBrush x:Key="SelectionBrush" Color="#EBFFFFFF" />
 
     <LinearGradientBrush x:Key="GameDetailsBackgroundBrush" StartPoint="0.5,0" EndPoint="0.5,0.8" >
         <GradientStop Color="#0010181A" Offset="0.0"/>

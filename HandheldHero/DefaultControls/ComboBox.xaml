@@ -1,0 +1,125 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        Drop-down: rounded raised field with a chevron; the list opens on the same rounded surface as the panels.
+        Text stays light in every state (the stock theme turned it black on focus).
+    -->
+    <Style TargetType="ComboBox">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="Background" Value="{DynamicResource RaisedBrush}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Padding" Value="18,0,18,0" />
+        <Setter Property="MinHeight" Value="58" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <Border x:Name="Face" CornerRadius="14" Background="{TemplateBinding Background}" />
+                        <ToggleButton x:Name="ToggleButton" Focusable="False" ClickMode="Press"
+                                      IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                    <DockPanel LastChildFill="False" Background="Transparent">
+                                        <TextBlock DockPanel.Dock="Right" Text="&#xE70D;" FontFamily="{DynamicResource FontIcons}"
+                                                   Foreground="{DynamicResource TextMutedBrush}" FontSize="15"
+                                                   VerticalAlignment="Center" Margin="0,2,20,0" />
+                                    </DockPanel>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+
+                        <TextBlock Style="{DynamicResource TextBlockBaseStyle}"
+                                   IsHitTestVisible="False" FontSize="{TemplateBinding FontSize}"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                   x:Name="TextContent" Margin="{TemplateBinding Padding}">
+                            <ContentPresenter IsHitTestVisible="False"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
+                        </TextBlock>
+
+                        <Popup x:Name="Popup" IsOpen="{TemplateBinding IsDropDownOpen}"
+                               Placement="Bottom" VerticalOffset="6" Focusable="False" AllowsTransparency="True">
+                            <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                  MinWidth="{TemplateBinding ActualWidth}"
+                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                <Border Background="{DynamicResource OverlayMenuBackgroundBrush}" CornerRadius="16"
+                                        BorderBrush="{DynamicResource SurfaceLineBrush}" BorderThickness="1" Padding="6">
+                                    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                                  VerticalScrollBarVisibility="Auto">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Grid>
+                        </Popup>
+
+                        <Border x:Name="FocusRing" Margin="-5" CornerRadius="19" Visibility="Hidden" IsHitTestVisible="False"
+                                BorderThickness="{DynamicResource SelectionRingThickness}"
+                                BorderBrush="{DynamicResource SelectionRingBrush}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="Face" Property="Background" Value="{DynamicResource RaisedHighBrush}" />
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Face" Property="Background" Value="{DynamicResource RaisedHighBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type ComboBoxItem}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Padding" Value="16,0,16,0" />
+        <Setter Property="MinHeight" Value="54" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                    <Grid>
+                        <Border x:Name="Fill" CornerRadius="12" Background="{TemplateBinding Background}" />
+                        <TextBlock Style="{DynamicResource TextBlockBaseStyle}" FontSize="{TemplateBinding FontSize}"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                   x:Name="TextContent" Margin="{TemplateBinding Padding}">
+                            <ContentPresenter />
+                        </TextBlock>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="TextContent" Property="Foreground" Value="{DynamicResource AccentSoftBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="Fill" Property="Background" Value="{DynamicResource FocusFillBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Fill" Property="Background" Value="{DynamicResource FocusFillBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ComboBoxEx" BasedOn="{StaticResource {x:Type ComboBox}}">
+    </Style>
+</ResourceDictionary>
