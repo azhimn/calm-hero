@@ -96,3 +96,31 @@ Variables:
     Title: "Reopen the last used tab"
     Type: Boolean
     Default: false
+
+  LayoutInfo:
+    Title: "Tab layout: carousel (logo, genres, playtime) or grid"
+    Type: Header
+  UseDefaultPreviewTabs:
+    Title: "Built-in carousel tabs: Home, Favorites, Recent, Most Played and similar (untick to choose your own below)"
+    Type: Boolean
+    Default: true
+  PreviewTab1:
+    Title: "Carousel tab 1 (exact tab name, any case)"
+    Type: String
+    Default: ""
+  PreviewTab2:
+    Title: "Carousel tab 2"
+    Type: String
+    Default: ""
+  PreviewTab3:
+    Title: "Carousel tab 3"
+    Type: String
+    Default: ""
+  PreviewTab4:
+    Title: "Carousel tab 4"
+    Type: String
+    Default: ""
+  PreviewTab5:
+    Title: "Carousel tab 5"
+    Type: String
+    Default: ""

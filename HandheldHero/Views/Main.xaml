@@ -14,6 +14,7 @@
            * HOME / FAVORITES / RECENT / MOST PLAYED ... -> single horizontal row, the selected
              cover is always centred (carousel).  Main.Tag == "Carousel"
            * ALL GAMES (and any other preset)            -> multi-row grid + A-Z position rail.
+         Users can add names or drop the built-in list in Theme Options (see ControlTemplate.Triggers).
          Both layouts share the same data, selection, focus and controller bindings: the stock
          Playnite list (PART_ListGameItems) always owns input; in carousel mode it is kept
          invisible and a display-only list mirrors its selection.
@@ -226,6 +227,75 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Border.Style>
+                            </Border>
+
+                            <!-- Per-tab layout slots. PreviewSlotN is Hidden (not Collapsed) while the active tab's name equals Theme Options
+                                 PreviewTabN (case-insensitive); signalled via Visibility because a template trigger may not read and set Tag. ControlTemplate.Triggers turn that into the preview layout.
+                                 Tag = the slot's name; behaviours DataTrigger because its Value can be a binding (a WPF DataTrigger's can't). -->
+                            <Border x:Name="PreviewSlot1" Visibility="Collapsed"
+                                    Tag="{PluginSettings Plugin=ThemeOptions, Path=Options[PreviewTab1], Converter={StaticResource StringToUpperCaseConverter}}">
+                                <i:Interaction.Triggers>
+                                    <ic:DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Comparison="Equal"
+                                                    Value="{Binding Tag, ElementName=PreviewSlot1}">
+                                        <ic:ChangePropertyAction PropertyName="Visibility" Value="Hidden" />
+                                    </ic:DataTrigger>
+                                    <ic:DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Comparison="NotEqual"
+                                                    Value="{Binding Tag, ElementName=PreviewSlot1}">
+                                        <ic:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                                    </ic:DataTrigger>
+                                </i:Interaction.Triggers>
+                            </Border>
+                            <Border x:Name="PreviewSlot2" Visibility="Collapsed"
+                                    Tag="{PluginSettings Plugin=ThemeOptions, Path=Options[PreviewTab2], Converter={StaticResource StringToUpperCaseConverter}}">
+                                <i:Interaction.Triggers>
+                                    <ic:DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Comparison="Equal"
+                                                    Value="{Binding Tag, ElementName=PreviewSlot2}">
+                                        <ic:ChangePropertyAction PropertyName="Visibility" Value="Hidden" />
+                                    </ic:DataTrigger>
+                                    <ic:DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Comparison="NotEqual"
+                                                    Value="{Binding Tag, ElementName=PreviewSlot2}">
+                                        <ic:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                                    </ic:DataTrigger>
+                                </i:Interaction.Triggers>
+                            </Border>
+                            <Border x:Name="PreviewSlot3" Visibility="Collapsed"
+                                    Tag="{PluginSettings Plugin=ThemeOptions, Path=Options[PreviewTab3], Converter={StaticResource StringToUpperCaseConverter}}">
+                                <i:Interaction.Triggers>
+                                    <ic:DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Comparison="Equal"
+                                                    Value="{Binding Tag, ElementName=PreviewSlot3}">
+                                        <ic:ChangePropertyAction PropertyName="Visibility" Value="Hidden" />
+                                    </ic:DataTrigger>
+                                    <ic:DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Comparison="NotEqual"
+                                                    Value="{Binding Tag, ElementName=PreviewSlot3}">
+                                        <ic:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                                    </ic:DataTrigger>
+                                </i:Interaction.Triggers>
+                            </Border>
+                            <Border x:Name="PreviewSlot4" Visibility="Collapsed"
+                                    Tag="{PluginSettings Plugin=ThemeOptions, Path=Options[PreviewTab4], Converter={StaticResource StringToUpperCaseConverter}}">
+                                <i:Interaction.Triggers>
+                                    <ic:DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Comparison="Equal"
+                                                    Value="{Binding Tag, ElementName=PreviewSlot4}">
+                                        <ic:ChangePropertyAction PropertyName="Visibility" Value="Hidden" />
+                                    </ic:DataTrigger>
+                                    <ic:DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Comparison="NotEqual"
+                                                    Value="{Binding Tag, ElementName=PreviewSlot4}">
+                                        <ic:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                                    </ic:DataTrigger>
+                                </i:Interaction.Triggers>
+                            </Border>
+                            <Border x:Name="PreviewSlot5" Visibility="Collapsed"
+                                    Tag="{PluginSettings Plugin=ThemeOptions, Path=Options[PreviewTab5], Converter={StaticResource StringToUpperCaseConverter}}">
+                                <i:Interaction.Triggers>
+                                    <ic:DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Comparison="Equal"
+                                                    Value="{Binding Tag, ElementName=PreviewSlot5}">
+                                        <ic:ChangePropertyAction PropertyName="Visibility" Value="Hidden" />
+                                    </ic:DataTrigger>
+                                    <ic:DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Comparison="NotEqual"
+                                                    Value="{Binding Tag, ElementName=PreviewSlot5}">
+                                        <ic:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                                    </ic:DataTrigger>
+                                </i:Interaction.Triggers>
                             </Border>
 
                             <!-- Playnite binds this required part to the selected game's background art. -->
@@ -1187,43 +1257,68 @@
                         <GameStatus x:Name="PART_ElemGameStatus" Grid.RowSpan="3"
                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                     </Grid>
+                    <!-- Layout per tab: Main.Tag = "Carousel" -> preview layout, anything else -> grid. Later triggers win. -->
+                    <ControlTemplate.Triggers>
+                        <!-- Built-in preview-layout tab names (Theme Options UseDefaultPreviewTabs = off drops them). -->
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="HOME">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="FAVORITES">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="FAVORITE">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="FAVOURITES">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="RECENT">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="RECENTLY PLAYED">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="RECENTLY ADDED">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="RECENT GAMES">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="MOST PLAYED">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="TOP PLAYED">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="CONTINUE PLAYING">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{PluginSettings Plugin=ThemeOptions, Path=Options[UseDefaultPreviewTabs]}" Value="False">
+                            <Setter Property="Tag" Value="{x:Null}" />
+                        </DataTrigger>
+                        <!-- User-chosen names (Theme Options PreviewTab1-5, see PreviewSlot1-5). -->
+                        <Trigger SourceName="PreviewSlot1" Property="Visibility" Value="Hidden">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </Trigger>
+                        <Trigger SourceName="PreviewSlot2" Property="Visibility" Value="Hidden">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </Trigger>
+                        <Trigger SourceName="PreviewSlot3" Property="Visibility" Value="Hidden">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </Trigger>
+                        <Trigger SourceName="PreviewSlot4" Property="Visibility" Value="Hidden">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </Trigger>
+                        <Trigger SourceName="PreviewSlot5" Property="Visibility" Value="Hidden">
+                            <Setter Property="Tag" Value="Carousel" />
+                        </Trigger>
+                        <!-- No preset (custom filter from the Filters view): its name reads as "" and would match empty slots. -->
+                        <DataTrigger Binding="{Binding ActiveFilterPreset}" Value="{x:Null}">
+                            <Setter Property="Tag" Value="{x:Null}" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-                    <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="HOME">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="FAVORITES">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="FAVORITE">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="FAVOURITES">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="RECENT">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="RECENTLY PLAYED">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="RECENTLY ADDED">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="RECENT GAMES">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="MOST PLAYED">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="TOP PLAYED">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        <DataTrigger Binding="{Binding ActiveFilterPreset.Name, Converter={StaticResource StringToUpperCaseConverter}}" Value="CONTINUE PLAYING">
-            <Setter Property="Tag" Value="Carousel" />
-        </DataTrigger>
-        </Style.Triggers>
     </Style>
 </ResourceDictionary>

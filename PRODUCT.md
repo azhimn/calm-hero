@@ -24,7 +24,7 @@ A fork of Handheld Hero (MIT, nickhighland) that keeps its performance disciplin
 
 - Devices: all Windows handhelds. Design and test at 1920×1080 (Ally / Ally X, 7"), 1280×800 (Steam Deck on Windows, 16:10), 2560×1600 (Legion Go, 8.8"), and the MSI Claw's 1080p.
 - Input: Xbox-style gamepad. Bottom bar shows button prompts; A = confirm, B = back, X/Y/menu as Playnite defines.
-- Layout is chosen by filter-preset tab name: carousel tabs (HOME, FAVORITES, RECENT…) vs. the library grid (ALL GAMES and anything else).
+- Layout is chosen by filter-preset tab name: carousel tabs (HOME, FAVORITES, RECENT…) vs. the library grid (ALL GAMES and anything else); users can add carousel tab names or drop the built-in list in Theme Options.
 - Optional plugins: Extra Metadata Loader (logos, trailers), SuccessStory (achievements).
 - Distribution: GitHub repo and the Playnite add-on browser (needs a `Manifest/` entry and a `.pthm` package).
 
