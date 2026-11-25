@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:pin="clr-namespace:Playnite.Input;assembly=Playnite">
 
     <Style x:Key="GameMenuButton" BasedOn="{StaticResource {x:Type ButtonEx}}" TargetType="ButtonEx">
         <Setter Property="Margin" Value="5" />
@@ -11,6 +12,24 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="22" />
         <Setter Property="Padding" Value="18,14,18,18" />
+        <Style.Resources>
+            <!-- The Menu (Start) button that opened this menu also closes it, and so does View. The window markup is Playnite's, so the
+                 binding rides on the item panel, which every focused menu button sits inside. -->
+            <Style TargetType="ItemsControlEx">
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <StackPanel>
+                                <StackPanel.InputBindings>
+                                    <pin:GameControllerInputBinding Button="Start" Command="{Binding CloseCommand}" />
+                                    <pin:GameControllerInputBinding Button="Back" Command="{Binding CloseCommand}" />
+                                </StackPanel.InputBindings>
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
         <Style.Triggers>
             <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                 <BeginStoryboard>

@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:pin="clr-namespace:Playnite.Input;assembly=Playnite">
 
     <!-- Row that opens a sub-list (Library, Platform, Genre ...): label left, chevron right.
          Tag = True when that filter is active: the label turns accent. -->
@@ -107,6 +108,11 @@
                         <Border.RenderTransform>
                             <TranslateTransform x:Name="SheetShift" />
                         </Border.RenderTransform>
+                        <!-- The right-stick click that opens the panel closes it again; View closes it too. -->
+                        <Border.InputBindings>
+                            <pin:GameControllerInputBinding Button="RightStick" Command="{Binding ToggleFiltersCommand}" />
+                            <pin:GameControllerInputBinding Button="Back" Command="{Binding ToggleFiltersCommand}" />
+                        </Border.InputBindings>
                         <ItemsControlEx x:Name="PART_ItemsHost" Focusable="False"
                                         KeyboardNavigation.DirectionalNavigation="Once">
                             <ItemsControl.ItemsPanel>

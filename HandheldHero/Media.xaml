@@ -5,12 +5,17 @@
     <BitmapImage x:Key="DefaultGameIcon" UriSource="{ThemeFile 'Images/applogo_clean.png'}" popt:Freeze="True" />
     <BitmapImage x:Key="DefaultGameCover" UriSource="{ThemeFile 'Images/custom_cover_background.png'}" popt:Freeze="True" />
 
-    <!-- Battery glyphs: Segoe Fluent Icons (Battery1 / 3 / 6 / 9 / Charging9) -->
-    <TextBlock x:Key="BatteryStatusCritical" Text="&#xE851;" FontFamily="{DynamicResource FontIcons}" />
-    <TextBlock x:Key="BatteryStatusLow" Text="&#xE853;" FontFamily="{DynamicResource FontIcons}" />
-    <TextBlock x:Key="BatteryStatusMedium" Text="&#xE856;" FontFamily="{DynamicResource FontIcons}" />
-    <TextBlock x:Key="BatteryStatusHigh" Text="&#xE859;" FontFamily="{DynamicResource FontIcons}" />
-    <TextBlock x:Key="BatteryStatusCharging" Text="&#xE83E;" FontFamily="{DynamicResource FontIcons}" />
+    <!-- Battery glyphs: Segoe Fluent Icons mobile set (MobBattery1/3/6/9, MobBatteryCharging1/3/6/9 + 6 as fallback).
+         Its bolt reads at top-bar size; the desktop Battery glyphs only have a tiny corner bolt. -->
+    <TextBlock x:Key="BatteryStatusCritical" Text="&#xEBA1;" FontFamily="{DynamicResource FontIcons}" />
+    <TextBlock x:Key="BatteryStatusLow" Text="&#xEBA3;" FontFamily="{DynamicResource FontIcons}" />
+    <TextBlock x:Key="BatteryStatusMedium" Text="&#xEBA6;" FontFamily="{DynamicResource FontIcons}" />
+    <TextBlock x:Key="BatteryStatusHigh" Text="&#xEBA9;" FontFamily="{DynamicResource FontIcons}" />
+    <TextBlock x:Key="BatteryStatusCharging" Text="&#xEBB1;" FontFamily="{DynamicResource FontIcons}" />
+    <TextBlock x:Key="BatteryStatusChargingCritical" Text="&#xEBAC;" FontFamily="{DynamicResource FontIcons}" />
+    <TextBlock x:Key="BatteryStatusChargingLow" Text="&#xEBAE;" FontFamily="{DynamicResource FontIcons}" />
+    <TextBlock x:Key="BatteryStatusChargingMedium" Text="&#xEBB1;" FontFamily="{DynamicResource FontIcons}" />
+    <TextBlock x:Key="BatteryStatusChargingHigh" Text="&#xEBB4;" FontFamily="{DynamicResource FontIcons}" />
 
     <Style x:Key="ProgressIndicator" TargetType="ContentControl">
         <Setter Property="Template">

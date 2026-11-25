@@ -4,6 +4,7 @@
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:i="clr-namespace:Microsoft.Xaml.Behaviors;assembly=Microsoft.Xaml.Behaviors"
                     xmlns:ic="clr-namespace:Microsoft.Xaml.Behaviors.Core;assembly=Microsoft.Xaml.Behaviors"
+                    xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
                     mc:Ignorable="d">
 
     <!-- ===================================================================================
@@ -284,6 +285,19 @@
                                     <TextBlock x:Name="PART_TextClock" Style="{DynamicResource TextBlockBaseStyle}"
                                                FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,26,0" />
 
+                                    <!-- Playnite only exposes "charging". Plugged in at a charge limit, Windows reports
+                                         "not charging", so also read the AC line (re-read every 10 s; Windows Forms PowerStatus
+                                         is a fresh query on each property read but has no change notification). -->
+                                    <TextBlock x:Name="AcLineProbe" Visibility="Collapsed" Text="{Binding PowerLineStatus}"
+                                               DataContext="{x:Static wf:SystemInformation.PowerStatus}">
+                                        <i:Interaction.Triggers>
+                                            <ic:TimerTrigger EventName="Loaded" MillisecondsPerTick="10000">
+                                                <ic:ChangePropertyAction PropertyName="DataContext" Value="{x:Null}" />
+                                                <ic:ChangePropertyAction PropertyName="DataContext" Value="{x:Static wf:SystemInformation.PowerStatus}" />
+                                            </ic:TimerTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TextBlock>
+
                                     <ContentControl x:Name="PART_ElemBatteryStatus" Focusable="False" FontSize="28"
                                                     VerticalAlignment="Center" Margin="0,2,8,0">
                                         <ContentControl.Style>
@@ -305,7 +319,41 @@
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding PowerStatus.IsCharging}" Value="True">
                                                         <Setter Property="Content" Value="{DynamicResource BatteryStatusCharging}" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                                                     </DataTrigger>
+                                                    <!-- On AC (charging, or held at a charge limit): charging glyph for the current level -->
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Text, ElementName=AcLineProbe}" Value="Online" />
+                                                            <Condition Binding="{Binding PowerStatus.Charge}" Value="Critical" />
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Content" Value="{DynamicResource BatteryStatusChargingCritical}" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Text, ElementName=AcLineProbe}" Value="Online" />
+                                                            <Condition Binding="{Binding PowerStatus.Charge}" Value="Low" />
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Content" Value="{DynamicResource BatteryStatusChargingLow}" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Text, ElementName=AcLineProbe}" Value="Online" />
+                                                            <Condition Binding="{Binding PowerStatus.Charge}" Value="Medium" />
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Content" Value="{DynamicResource BatteryStatusChargingMedium}" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Text, ElementName=AcLineProbe}" Value="Online" />
+                                                            <Condition Binding="{Binding PowerStatus.Charge}" Value="High" />
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Content" Value="{DynamicResource BatteryStatusChargingHigh}" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </ContentControl.Style>
