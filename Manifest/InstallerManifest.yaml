@@ -1,13 +1,16 @@
-AddonId: 'HandheldHero_8f49363a-c1ad-47f0-9b9e-2f09aecae44d'
+AddonId: 'CalmHero_a1af5af7-dcb8-4ffe-9f19-19ba154b7b46'
 Packages:
-  - Version: 1.1.1
+  - Version: 1.1.0
     RequiredApiVersion: 2.9.0
-    ReleaseDate: 2026-10-14
-    PackageUrl: https://github.com/nickhighland/HandheldHero/releases/download/v1.1.1/HandheldHero_1_1_1.pthm
+    ReleaseDate: 2026-11-25
+    PackageUrl: https://github.com/azhimn/calm-hero/releases/download/v1.1.0/CalmHero_a1af5af7-dcb8-4ffe-9f19-19ba154b7b46_1_1_0.pthm
     Changelog:
-      - Hero block with game logo (or title), genres, year and info pills
-      - Depth falloff, floor glow and reflection on the carousel
-      - Fade-in on tab change and on the details screen
-      - Tile badges for favorite, playing and not installed
-      - Softer navigation and activation sounds
-      - Trailer button on the details screen (no autoplay)
+      - Choose which tabs use the carousel or the grid (Theme Options > Tab layout)
+      - Battery icon shows a charging bolt whenever plugged in, also when held at a charge limit
+      - The button that opens a menu closes it again (Start for the game menu, View for the main menu, right stick or View for filters)
+  - Version: 1.0.0
+    RequiredApiVersion: 2.9.0
+    ReleaseDate: 2026-11-13
+    PackageUrl: https://github.com/azhimn/calm-hero/releases/download/v1.0.0/CalmHero_a1af5af7-dcb8-4ffe-9f19-19ba154b7b46_1_0_0.pthm
+    Changelog:
+      - First release, forked from Handheld Hero

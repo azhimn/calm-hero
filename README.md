@@ -23,7 +23,7 @@ When you press LB or RB, the accent underline moves over to the new tab:
 
 ### From a release file (.pthm)
 
-1. Download `CalmHero.pthm` from the [Releases](https://github.com/azhimn/calm-hero/releases) page.
+1. Download the `.pthm` file (`CalmHero_…_<version>.pthm`) from the latest release on the [Releases](https://github.com/azhimn/calm-hero/releases) page.
 2. Double-click the file, or drag it onto the Playnite window. Playnite asks whether to install the theme.
 3. Restart Playnite when it asks.
 
@@ -54,7 +54,7 @@ The theme works without these. Both are in Playnite's add-on browser (in Desktop
 
 Check the [Releases](https://github.com/azhimn/calm-hero/releases) page for a newer version, then:
 
-- **Installed from a .pthm:** download the new `CalmHero.pthm` and install it the same way (double-click or drag
+- **Installed from a .pthm:** download the new `.pthm` from the latest release and install it the same way (double-click or drag
   onto Playnite). Restart Playnite when it asks.
 - **Installed manually:** close Playnite, delete the contents of
   `%APPDATA%\Playnite\Themes\Fullscreen\CalmHero_a1af5af7-dcb8-4ffe-9f19-19ba154b7b46\`, copy in the contents of

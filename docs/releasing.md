@@ -26,13 +26,13 @@ Toolbox ships with Playnite:
 & "$env:LOCALAPPDATA\Playnite\Toolbox.exe" pack "C:\Roggie\theme\HandheldHero" "C:\Roggie\theme\dist"
 ```
 
-It writes a `.pthm` into the target folder. Check the file name it produced and rename it to `CalmHero.pthm`
-(the name the README's install steps use). `.pthm` files are git-ignored.
+It writes `CalmHero_a1af5af7-dcb8-4ffe-9f19-19ba154b7b46_<version>.pthm` (dots as underscores, e.g. `_1_1_0`)
+into the target folder. Upload it under that name; `.pthm` files are git-ignored.
 
 ## 4. Publish
 
-1. Commit, tag and push: `git tag v1.1.0`, `git push origin main --tags`.
-2. Create a GitHub release for the tag, attach `CalmHero.pthm`, and list the changes.
+1. Commit, tag and push: `git tag v1.1.0`, `git push origin main v1.1.0`. Not `--tags`: the clone also has upstream Handheld Hero tags.
+2. Create a GitHub release for the tag, attach the `.pthm`, and list the changes.
 3. Add the version to `Manifest/InstallerManifest.yaml` (newest first):
 
    ```yaml
@@ -41,14 +41,14 @@ It writes a `.pthm` into the target folder. Check the file name it produced and 
      - Version: 1.1.0
        RequiredApiVersion: 2.9.0
        ReleaseDate: 2026-12-01
-       PackageUrl: https://github.com/azhimn/calm-hero/releases/download/v1.1.0/CalmHero.pthm
+       PackageUrl: https://github.com/azhimn/calm-hero/releases/download/v1.1.0/CalmHero_a1af5af7-dcb8-4ffe-9f19-19ba154b7b46_1_1_0.pthm
        Changelog:
          - What changed
    ```
 
    Check it with `Toolbox.exe verify installer Manifest\InstallerManifest.yaml`.
 
-   The file still holds upstream Handheld Hero's values. Replace them on the first release.
+
 
 ## Add-on browser and automatic updates
 
