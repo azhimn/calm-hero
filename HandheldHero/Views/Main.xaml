@@ -59,7 +59,7 @@
     </Style>
 
     <!-- Carousel item: one 310 px slot per game (270 x 360 cover). The strip is shifted by SelectedIndex x 310
-         (see the list template below), so the selected cover is always exactly in the middle. -->
+         (see CarouselList), so the selected cover is always exactly in the middle. -->
     <Style x:Key="CarouselItemStyle" TargetType="ListBoxItem">
         <Setter Property="Width" Value="310" />
         <Setter Property="Height" Value="500" />
@@ -90,21 +90,32 @@
                         </Storyboard>
                     </ControlTemplate.Resources>
                     <Grid Background="{x:Null}">
+                      <!-- The virtualizing panel only numbers the slots it has created: AlternationIndex is consecutive
+                           there but not the real item index after a jump. So the selected slot publishes its own
+                           AlternationIndex on the list's Tag, and depth is measured from that. -->
+                      <i:Interaction.Triggers>
+                          <ic:DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                              <ic:ChangePropertyAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType=ListBox}}" PropertyName="Tag"
+                                                       Value="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
+                          </ic:DataTrigger>
+                      </i:Interaction.Triggers>
                       <!-- distance from the selected cover: each step to the side is a little smaller and dimmer -->
                       <Grid x:Name="DepthHost" RenderTransformOrigin="0.5,0.5">
                         <Grid.RenderTransform>
                             <ScaleTransform>
                                 <ScaleTransform.ScaleX>
                                     <MultiBinding Converter="{StaticResource MathConverter}"
-                                                  ConverterParameter="[1] &lt; 0 ? 1 : 1 - 0.05 * Min(Abs([0] - [1]), 4)">
+                                                  ConverterParameter="[2] &lt; 0 ? 1 : 1 - 0.05 * Min(Abs([0] - [1]), 4)">
                                         <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource AncestorType=ListBoxItem}" />
+                                        <Binding Path="Tag" RelativeSource="{RelativeSource AncestorType=ListBox}" />
                                         <Binding Path="SelectedIndex" RelativeSource="{RelativeSource AncestorType=ListBox}" />
                                     </MultiBinding>
                                 </ScaleTransform.ScaleX>
                                 <ScaleTransform.ScaleY>
                                     <MultiBinding Converter="{StaticResource MathConverter}"
-                                                  ConverterParameter="[1] &lt; 0 ? 1 : 1 - 0.05 * Min(Abs([0] - [1]), 4)">
+                                                  ConverterParameter="[2] &lt; 0 ? 1 : 1 - 0.05 * Min(Abs([0] - [1]), 4)">
                                         <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource AncestorType=ListBoxItem}" />
+                                        <Binding Path="Tag" RelativeSource="{RelativeSource AncestorType=ListBox}" />
                                         <Binding Path="SelectedIndex" RelativeSource="{RelativeSource AncestorType=ListBox}" />
                                     </MultiBinding>
                                 </ScaleTransform.ScaleY>
@@ -112,8 +123,9 @@
                         </Grid.RenderTransform>
                         <Grid.Opacity>
                             <MultiBinding Converter="{StaticResource MathConverter}"
-                                          ConverterParameter="[1] &lt; 0 ? 1 : 1 - 0.12 * Min(Abs([0] - [1]), 4)">
+                                          ConverterParameter="[2] &lt; 0 ? 1 : 1 - 0.12 * Min(Abs([0] - [1]), 4)">
                                 <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource AncestorType=ListBoxItem}" />
+                                <Binding Path="Tag" RelativeSource="{RelativeSource AncestorType=ListBox}" />
                                 <Binding Path="SelectedIndex" RelativeSource="{RelativeSource AncestorType=ListBox}" />
                             </MultiBinding>
                         </Grid.Opacity>
@@ -1081,6 +1093,15 @@
                                                 <Canvas Width="0" Height="0" HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False">
                                                     <Border x:Name="CarouselShiftDriver" Width="0" Height="0" Visibility="Hidden" />
                                                 </Canvas>
+                                                <!-- Virtualized: Playnite's FullscreenTilePanel only creates about 10 slots around its scroll
+                                                     position (one before it, Columns + 1 after), so memory and per-move work stay flat for any
+                                                     library size. (A plain StackPanel built every game: about 0.3 MB each, and an out-of-memory
+                                                     crash near 10,000 games.)
+                                                     Geometry: 310 px slots, panel 8.5 slots wide (Columns 8 + Playnite's half-slot margin), each
+                                                     item drawn a quarter slot in. CarouselShiftDriver.Width = SelectedIndex x 310 (S). The panel
+                                                     scrolls to S - 930 (3 slots before the selection, so the slots to its left exist too), clamped
+                                                     to its range [0, N x 310 - 2635]; the list's TranslateTransform adds back whatever the clamp
+                                                     removed at either end. Net effect: slot i sits at 805 + i x 310 - S, so the selection is centred. -->
                                                 <ListBox x:Name="CarouselList" Width="1920" Height="500" AlternationCount="100000"
                                                          Background="Transparent" BorderThickness="0"
                                                          Focusable="False" IsTabStop="False"
@@ -1088,12 +1109,24 @@
                                                          SelectedItem="{Binding SelectedGame, Mode=OneWay}"
                                                          IsSynchronizedWithCurrentItem="False"
                                                          ItemContainerStyle="{StaticResource CarouselItemStyle}">
+                                                    <!-- Tag = the selected slot's AlternationIndex, written by CarouselItemStyle; until then SelectedIndex. -->
+                                                    <ListBox.Tag>
+                                                        <Binding Path="SelectedIndex" RelativeSource="{RelativeSource Self}" />
+                                                    </ListBox.Tag>
+                                                    <ListBox.RenderTransform>
+                                                        <TranslateTransform>
+                                                            <TranslateTransform.X>
+                                                                <MultiBinding Converter="{StaticResource MathConverter}"
+                                                                              ConverterParameter="Min(Max([0] - 930, 0), Max(0, [1] * 310 - 2635)) - [0] + 930">
+                                                                    <Binding Path="Width" ElementName="CarouselShiftDriver" />
+                                                                    <Binding Path="Items.Count" ElementName="CarouselList" />
+                                                                </MultiBinding>
+                                                            </TranslateTransform.X>
+                                                        </TranslateTransform>
+                                                    </ListBox.RenderTransform>
                                                     <!-- The strip slides to the new game instead of jumping. ChangePropertyAction can only
                                                          animate properties of elements in the visual tree, so it animates the Width of the
-                                                         invisible CarouselShiftDriver (310 px per item) and the strip's X follows that width. -->
-                                                    <ListBox.RenderTransform>
-                                                        <TranslateTransform X="{Binding Width, ElementName=CarouselShiftDriver, Converter={StaticResource MathConverter}, ConverterParameter='x * -1'}" />
-                                                    </ListBox.RenderTransform>
+                                                         invisible CarouselShiftDriver (310 px per item); the scroll offset and shift follow it. -->
                                                     <i:Interaction.Triggers>
                                                         <ic:PropertyChangedTrigger Binding="{Binding SelectedIndex, ElementName=CarouselList}">
                                                             <ic:ChangePropertyAction TargetObject="{Binding ElementName=CarouselShiftDriver}" PropertyName="Width"
@@ -1103,15 +1136,23 @@
                                                     </i:Interaction.Triggers>
                                                     <ListBox.Template>
                                                         <ControlTemplate TargetType="ListBox">
-                                                            <!-- A Canvas gives the strip its full width (no layout clipping). -->
+                                                            <!-- A Canvas so the strip is not clipped; the explicit size is the panel's viewport. -->
                                                             <Canvas Width="1920" Height="500">
-                                                                <ItemsPresenter Canvas.Left="805" Canvas.Top="0" Height="500" />
+                                                                <ItemsPresenter Canvas.Left="-202.5" Canvas.Top="0" Width="2635" Height="500" />
                                                             </Canvas>
                                                         </ControlTemplate>
                                                     </ListBox.Template>
                                                     <ListBox.ItemsPanel>
                                                         <ItemsPanelTemplate>
-                                                            <StackPanel Orientation="Horizontal" />
+                                                            <FullscreenTilePanel UseHorizontalLayout="True" Columns="8" ItemAspectRatio="310:500">
+                                                                <FullscreenTilePanel.HorizontalOffset>
+                                                                    <MultiBinding Converter="{StaticResource MathConverter}"
+                                                                                  ConverterParameter="Min(Max([0] - 930, 0), Max(0, [1] * 310 - 2635))">
+                                                                        <Binding Path="Width" ElementName="CarouselShiftDriver" />
+                                                                        <Binding Path="Items.Count" ElementName="CarouselList" />
+                                                                    </MultiBinding>
+                                                                </FullscreenTilePanel.HorizontalOffset>
+                                                            </FullscreenTilePanel>
                                                         </ItemsPanelTemplate>
                                                     </ListBox.ItemsPanel>
                                                     <ListBox.ItemTemplate>

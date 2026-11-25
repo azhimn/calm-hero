@@ -1,5 +1,12 @@
 AddonId: 'CalmHero_a1af5af7-dcb8-4ffe-9f19-19ba154b7b46'
 Packages:
+  - Version: 1.1.1
+    RequiredApiVersion: 2.9.0
+    ReleaseDate: 2026-11-25
+    PackageUrl: https://github.com/azhimn/calm-hero/releases/download/v1.1.1/CalmHero_a1af5af7-dcb8-4ffe-9f19-19ba154b7b46_1_1_1.pthm
+    Changelog:
+      - Fix crash with large libraries when a big tab (like All) used the carousel; the carousel now only builds the covers near the selection
+      - Carousel steps and tab switches stay fast with thousands of games
   - Version: 1.1.0
     RequiredApiVersion: 2.9.0
     ReleaseDate: 2026-11-25
