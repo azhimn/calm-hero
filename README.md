@@ -2,7 +2,7 @@
 
 A calm, gamepad-first **Fullscreen theme for [Playnite](https://playnite.link)**, built for Windows handhelds
 (ROG Ally, Legion Go, Steam Deck on Windows, MSI Claw). Forked from
-[Handheld Hero](https://github.com/nickhighland/HandheldHero) by nickhighland.
+[Handheld Hero](https://github.com/nickhighland/HandheldHero) by ProbablyModded.
 
 ![Calm Hero carousel on the Most Played tab](docs/previews/carousel.png)
 
